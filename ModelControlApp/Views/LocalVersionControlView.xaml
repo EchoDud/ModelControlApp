@@ -18,11 +18,21 @@
             <Button Content="Delete Project" Command="{Binding DeleteProjectCommand}" Margin="10" />
             <ListView ItemsSource="{Binding Projects}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedProject}" Margin="10"/>
             <Button Content="Add Model" Command="{Binding AddModelCommand}" Margin="10"/>
-            <Button Content="Remove Model" Command="{Binding RemoveModelCommand}" Margin="10"/>
-            <Button Content="Update Model" Command="{Binding UpdateModelCommand}" Margin="10"/>
-            <Button Content="Extract Model" Command="{Binding ExtractModelCommand}" Margin="10"/>
+            <Button Content="Remove Model" Command="{Binding RemoveModelCommand}" Margin="10"/>            
             <TextBlock Text="Models" Margin="10,20,10,0"/>
             <ListView ItemsSource="{Binding SelectedProject.Models}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedModel}" Margin="10"/>
+            <Button Content="Update Model" Command="{Binding UpdateModelCommand}" Margin="10"/>
+            <Button Content="Extract Version" Command="{Binding ExtractModelCommand}" Margin="10"/>
+            <Button Content="Remove Version" Command="{Binding RemoveModelVersionCommand}" Margin="10"/>
+            <TextBlock Text="Versions" Margin="10,20,10,0"/>
+            <ListView ItemsSource="{Binding SelectedModel.VersionNumber}" SelectedItem="{Binding SelectedVersion}" Margin="10">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Version" DisplayMemberBinding="{Binding Number}" />
+                        <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="Auto"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </StackPanel>
         <helix:HelixViewport3D Grid.Column="1">
             <helix:DefaultLights/>

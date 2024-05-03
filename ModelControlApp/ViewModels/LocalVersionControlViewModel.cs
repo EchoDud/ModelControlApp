@@ -21,6 +21,7 @@ namespace ModelControlApp.ViewModels
         private readonly FileService _fileService;
         private Project _selectedProject;
         private Model _selectedModel;
+        private ModelVersion _selectedVersion;
         private ObservableCollection<Project> _projects = new ObservableCollection<Project>();
 
         public LocalVersionControlViewModel(FileService fileService)
@@ -57,6 +58,12 @@ namespace ModelControlApp.ViewModels
         {
             get { return _selectedModel; }
             set { SetProperty(ref _selectedModel, value); }
+        }
+
+        public ModelVersion SelectedVersion
+        {
+            get { return _selectedVersion; }
+            set { SetProperty(ref _selectedVersion, value); }
         }
 
         private void CreateProject()
@@ -98,8 +105,10 @@ namespace ModelControlApp.ViewModels
                         FileType = fileExtension,
                         Owner = "User",
                         Project = SelectedProject.Name,
-                        VersionNumber = 1,
-                        Description = "Added via application"
+                        VersionNumber = new ObservableCollection<ModelVersion>
+                            {
+                                new ModelVersion { Number = 1, Description = "Initial version" }
+                            }
                     });
                 }
             }
@@ -139,12 +148,11 @@ namespace ModelControlApp.ViewModels
                         Stream = stream
                     };
                     var objectId = await _fileService.UploadFileAsync(uploadFileDTO);
-                    SelectedModel.Name = fileNameWithoutExtension;
-                    SelectedModel.FileType = fileExtension;
-                    SelectedModel.Owner = "User";
-                    SelectedModel.Project = SelectedProject.Name;
-                    SelectedModel.VersionNumber=+ 1; // This should be updated to the new version
-                    SelectedModel.Description = "Updated via application";
+                    SelectedModel.VersionNumber.Add(new ModelVersion
+                    {
+                        Number = SelectedModel.VersionNumber.Max(v => v.Number) + 1,
+                        Description = "Updated version"
+                    });
                 }
             }
         }
@@ -170,7 +178,7 @@ namespace ModelControlApp.ViewModels
                         Name = SelectedModel.Name,
                         Owner = SelectedModel.Owner,
                         Project = SelectedModel.Project,
-                        Version = SelectedModel.VersionNumber
+                        Version = SelectedModel.VersionNumber.Last().Number,
                     };
                     var stream = await _fileService.DownloadFileAsync(test);
 
