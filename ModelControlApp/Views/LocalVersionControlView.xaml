@@ -1,0 +1,32 @@
+﻿<Window x:Class="ModelControlApp.LocalVersionControlView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:prism="http://prismlibrary.com/"
+        xmlns:helix="http://helix-toolkit.org/wpf"
+        mc:Ignorable="d"
+        Title="Model Version Control" Height="600" Width="800"
+        prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Background="LightGray">
+            <Button Content="Create Project" Command="{Binding CreateProjectCommand}" Margin="10" />
+            <Button Content="Delete Project" Command="{Binding DeleteProjectCommand}" Margin="10" />
+            <ListView ItemsSource="{Binding Projects}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedProject}" Margin="10"/>
+            <Button Content="Add Model" Command="{Binding AddModelCommand}" Margin="10"/>
+            <Button Content="Remove Model" Command="{Binding RemoveModelCommand}" Margin="10"/>
+            <Button Content="Update Model" Command="{Binding UpdateModelCommand}" Margin="10"/>
+            <Button Content="Extract Model" Command="{Binding ExtractModelCommand}" Margin="10"/>
+            <TextBlock Text="Models" Margin="10,20,10,0"/>
+            <ListView ItemsSource="{Binding SelectedProject.Models}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedModel}" Margin="10"/>
+        </StackPanel>
+        <helix:HelixViewport3D Grid.Column="1">
+            <helix:DefaultLights/>
+            <ModelVisual3D Content="{Binding CurrentModel3D}"/>
+        </helix:HelixViewport3D>
+    </Grid>
+</Window>
