@@ -23,7 +23,7 @@
             <ListView ItemsSource="{Binding SelectedProject.Models}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedModel}" Margin="10"/>
             <Button Content="Update Model" Command="{Binding UpdateModelCommand}" Margin="10"/>
             <Button Content="Extract Version" Command="{Binding ExtractModelCommand}" Margin="10"/>
-            <Button Content="Remove Version" Command="{Binding RemoveModelVersionCommand}" Margin="10"/>
+            <Button Content="Remove Version" Command="{Binding RemoveVersionCommand}" Margin="10"/>
             <TextBlock Text="Versions" Margin="10,20,10,0"/>
             <ListView ItemsSource="{Binding SelectedModel.VersionNumber}" SelectedItem="{Binding SelectedVersion}" Margin="10">
                 <ListView.View>
