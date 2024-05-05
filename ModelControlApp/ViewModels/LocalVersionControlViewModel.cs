@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using HelixToolkit.Wpf;
+using Microsoft.Win32;
 using ModelControlApp.DTOs.FileStorageDTOs;
 using ModelControlApp.Models;
 using ModelControlApp.Services;
@@ -14,6 +15,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
+using System.Xml;
 
 namespace ModelControlApp.ViewModels
 {
@@ -24,6 +27,7 @@ namespace ModelControlApp.ViewModels
         private Model _selectedModel;
         private ModelVersion _selectedVersion;
         private ObservableCollection<Project> _projects = new ObservableCollection<Project>();
+        private Model3D _currentModel3D;
 
         public LocalVersionControlViewModel(FileService fileService)
         {
@@ -68,12 +72,64 @@ namespace ModelControlApp.ViewModels
         public ModelVersion SelectedVersion
         {
             get { return _selectedVersion; }
-            set { SetProperty(ref _selectedVersion, value); }
+            set
+            {
+                if (SetProperty(ref _selectedVersion, value))
+                {
+                    LoadSelectedModelVersion();
+                }
+            }
+        }
+
+        public Model3D CurrentModel3D
+        {
+            get { return _currentModel3D; }
+            set { SetProperty(ref _currentModel3D, value); }
         }
 
         private async void LoadInitialData()
         {
             await LoadAllModelsByOwner("User");
+        }
+
+        private async void LoadSelectedModelVersion()
+        {
+            if (SelectedModel != null && SelectedVersion != null)
+            {
+                try
+                {
+                    var modelStream = await _fileService.DownloadFileAsync(new DataFileWithVersionDTO
+                    {
+                        Name = SelectedModel.Name,
+                        Owner = SelectedModel.Owner,
+                        Project = SelectedModel.Project,
+                        Version = SelectedVersion.Number
+                    });
+                    var fileExtension = SelectedModel.FileType;
+                    CurrentModel3D = LoadModelFromStream(modelStream, fileExtension);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading 3D model: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private Model3D LoadModelFromStream(Stream stream, string fileExtension)
+        {
+            switch (fileExtension.ToLower())
+            {
+                case "stl":
+                    var stlReader = new StLReader();
+                    var stlModel = stlReader.Read(stream);
+                    return stlModel;
+                case "obj":
+                    var objReader = new ObjReader();
+                    var objModel = objReader.Read(stream);
+                    return objModel;
+                default:
+                    throw new NotSupportedException("Unsupported file format");
+            }
         }
 
         public async Task LoadAllModelsByOwner(string owner)
@@ -86,9 +142,8 @@ namespace ModelControlApp.ViewModels
                 foreach (var fileInfo in fileInfos)
                 {
                     var projectName = fileInfo.Metadata["project"].AsString;
-                    var modelName = fileInfo.Filename; // Assuming 'Filename' is used to uniquely identify the model
+                    var modelName = fileInfo.Filename; 
 
-                    // Check if the project already exists
                     var project = Projects.FirstOrDefault(p => p.Name == projectName);
                     if (project == null)
                     {
@@ -96,7 +151,6 @@ namespace ModelControlApp.ViewModels
                         Projects.Add(project);
                     }
 
-                    // Check if the model already exists in the project
                     var model = project.Models.FirstOrDefault(m => m.Name == modelName);
                     if (model == null)
                     {
@@ -111,7 +165,6 @@ namespace ModelControlApp.ViewModels
                         project.Models.Add(model);
                     }
 
-                    // Add new version to the existing model
                     model.VersionNumber.Add(new ModelVersion
                     {
                         Number = Convert.ToInt32(fileInfo.Metadata["version_number"].AsInt64),
@@ -128,14 +181,39 @@ namespace ModelControlApp.ViewModels
         private void CreateProject()
         {
             var projectName = Microsoft.VisualBasic.Interaction.InputBox("Enter new project name:", "New Project", "Default Project");
-            if (!string.IsNullOrWhiteSpace(projectName))
-                Projects.Add(new Project { Name = projectName });
+            if (string.IsNullOrWhiteSpace(projectName))
+            {
+                MessageBox.Show("Project name cannot be empty.", "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (Projects.Any(p => p.Name.Equals(projectName, StringComparison.OrdinalIgnoreCase)))
+            {
+                MessageBox.Show("A project with this name already exists. Please choose a different name.", "Duplicate Project Name", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            Projects.Add(new Project { Name = projectName });
         }
 
-        private void DeleteProject()
+        private async void DeleteProject()
         {
             if (SelectedProject != null)
+            {
+                foreach (var model in SelectedProject.Models.ToList())
+                {
+                    var deleteFileDTO = new DataFileWithoutVersionDTO
+                    {
+                        Name = model.Name,
+                        Owner = model.Owner,
+                        Project = model.Project
+                    };
+                    await _fileService.DeleteFileAsync(deleteFileDTO);
+                }
+
                 Projects.Remove(SelectedProject);
+                CurrentModel3D = null;
+            }
         }
 
 
@@ -146,29 +224,39 @@ namespace ModelControlApp.ViewModels
             {
                 using (var stream = File.OpenRead(openFileDialog.FileName))
                 {
-                    var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                    var fileExtension = Path.GetExtension(openFileDialog.FileName).TrimStart('.');
+                    var defaultFileName = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                    string modelName = Microsoft.VisualBasic.Interaction.InputBox("Enter a name for the new model:", "New Model", defaultFileName);
 
+                    if (string.IsNullOrWhiteSpace(modelName))
+                    {
+                        MessageBox.Show("Model name cannot be empty.", "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    if (SelectedProject != null && SelectedProject.Models.Any(m => m.Name.Equals(modelName, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        MessageBox.Show("A model with this name already exists in the current project. Please choose a different name.", "Duplicate Model Name", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    var fileExtension = Path.GetExtension(openFileDialog.FileName).TrimStart('.');
                     var uploadFileDTO = new UploadFileDTO
                     {
-                        Name = fileNameWithoutExtension,
+                        Name = modelName,
                         Type = fileExtension,
                         Owner = "User",
                         Project = SelectedProject.Name,
                         Description = "Added via application",
                         Stream = stream
                     };
-                    var objectId = await _fileService.UploadFileAsync(uploadFileDTO);
+                    await _fileService.UploadFileAsync(uploadFileDTO);
                     SelectedProject.Models.Add(new Model
                     {
-                        Name = fileNameWithoutExtension,
+                        Name = modelName,
                         FileType = fileExtension,
                         Owner = "User",
                         Project = SelectedProject.Name,
-                        VersionNumber = new ObservableCollection<ModelVersion>
-                            {
-                                new ModelVersion { Number = 1, Description = "Initial version" }
-                            }
+                        VersionNumber = new ObservableCollection<ModelVersion> { new ModelVersion { Number = 1, Description = "Initial version" } }
                     });
                 }
             }
@@ -186,12 +274,13 @@ namespace ModelControlApp.ViewModels
                 };
                 await _fileService.DeleteFileAsync(deleteFileDTO);
                 SelectedProject.Models.Remove(SelectedModel);
+                CurrentModel3D = null;
             }
         }
 
         private async void RemoveVersion()
         {
-            if (SelectedModel != null)
+            if (SelectedModel != null && SelectedVersion != null)
             {
                 var deleteFileDTO = new DataFileWithVersionDTO
                 {
@@ -202,6 +291,12 @@ namespace ModelControlApp.ViewModels
                 };
                 await _fileService.DeleteFileByVersionAsync(deleteFileDTO);
                 SelectedModel.VersionNumber.Remove(SelectedVersion);
+
+                if (!SelectedModel.VersionNumber.Any())
+                {
+                    RemoveModel();
+                }
+                SelectedVersion = null;
             }
         }
 
@@ -212,22 +307,22 @@ namespace ModelControlApp.ViewModels
             {
                 using (var stream = File.OpenRead(openFileDialog.FileName))
                 {
-                    /*var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-                    var fileExtension = Path.GetExtension(openFileDialog.FileName).TrimStart('.');*/
+                    string userDescription = Microsoft.VisualBasic.Interaction.InputBox("Enter description for the new version:", "Update Model", "Updated version");
+
                     var uploadFileDTO = new UploadFileDTO
                     {
                         Name = SelectedModel.Name,
                         Type = SelectedModel.FileType,
                         Owner = "User",
                         Project = SelectedProject.Name,
-                        Description = "Updated via application",
+                        Description = userDescription,
                         Stream = stream
                     };
-                    var objectId = await _fileService.UploadFileAsync(uploadFileDTO);
+                    await _fileService.UploadFileAsync(uploadFileDTO);
                     SelectedModel.VersionNumber.Add(new ModelVersion
                     {
                         Number = SelectedModel.VersionNumber.Max(v => v.Number) + 1,
-                        Description = "Updated version"
+                        Description = userDescription
                     });
                 }
             }
@@ -240,7 +335,7 @@ namespace ModelControlApp.ViewModels
 
             var saveFileDialog = new SaveFileDialog
             {
-                FileName = SelectedModel.Name, // Filename includes extension
+                FileName = SelectedModel.Name,
                 DefaultExt = SelectedModel.FileType,
                 Filter = $"Model Files|*.{SelectedModel.FileType}"
             };

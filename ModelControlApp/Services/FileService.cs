@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ModelControlApp.Services
 {
-    public class FileService
+    public class FileService : IFileService
     {
         private readonly FileRepository _fileRepository;
 
