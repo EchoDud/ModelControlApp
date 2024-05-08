@@ -1,5 +1,6 @@
 ﻿using ModelControlApp.Services;
 using ModelControlApp.ViewModels;
+using ModelControlApp.Views;
 using Prism.Ioc;
 using Prism.Unity;
 using System.ComponentModel;
@@ -23,9 +24,12 @@ namespace ModelControlApp
         {
             // Register the ModelService with the interface IModelService
             containerRegistry.RegisterSingleton<FileService>();
+            containerRegistry.RegisterSingleton<AuthenticationService>();
 
             // Optionally, ensure MainViewModel is also registered if not done automatically
             containerRegistry.Register<LocalVersionControlView>();
+            containerRegistry.Register<LoginView>();
+            containerRegistry.Register<RegisterView>();
         }
     }
 

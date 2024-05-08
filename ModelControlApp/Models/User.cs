@@ -9,6 +9,6 @@ namespace ModelControlApp.Models
     public class User
     {
         public string Username { get; set; }
-        public List<Project> Projects { get; set; } = new List<Project>();
+        public string Password { get; set; } 
     }
 }

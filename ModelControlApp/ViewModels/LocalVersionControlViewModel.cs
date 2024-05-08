@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using ModelControlApp.DTOs.FileStorageDTOs;
 using ModelControlApp.Models;
 using ModelControlApp.Services;
+using ModelControlApp.Views;
 using MongoDB.Bson;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -27,7 +28,12 @@ namespace ModelControlApp.ViewModels
         private Model _selectedModel;
         private ModelVersion _selectedVersion;
         private ObservableCollection<Project> _projects = new ObservableCollection<Project>();
+        private Project _selectedServerProject;
+        private Model _selectedServerModel;
+        private ModelVersion _selectedServerVersion;
+        private ObservableCollection<Project> _Serverprojects = new ObservableCollection<Project>();
         private Model3D _currentModel3D;
+        private bool _isLoggedIn = false;
 
         public LocalVersionControlViewModel(FileService fileService)
         {
@@ -39,6 +45,8 @@ namespace ModelControlApp.ViewModels
             UpdateModelCommand = new DelegateCommand(UpdateModel, () => SelectedModel != null).ObservesProperty(() => SelectedModel);
             ExtractModelCommand = new DelegateCommand(ExtractModel, () => SelectedVersion != null).ObservesProperty(() => SelectedVersion);
             RemoveVersionCommand = new DelegateCommand(RemoveVersion, ()  => SelectedVersion!= null).ObservesProperty(() => SelectedVersion);
+            OpenLoginDialogCommand = new DelegateCommand(ExecuteOpenLoginDialog);
+            OpenRegisterDialogCommand = new DelegateCommand(ExecuteOpenRegisterDialog);
             LoadInitialData();
         }
         
@@ -50,6 +58,8 @@ namespace ModelControlApp.ViewModels
         public ICommand UpdateModelCommand { get; }
         public ICommand ExtractModelCommand { get; private set; }
         public ICommand RemoveVersionCommand { get; }
+        public ICommand OpenLoginDialogCommand { get; private set; }
+        public ICommand OpenRegisterDialogCommand { get; private set; }
 
         public ObservableCollection<Project> Projects
         {
@@ -60,13 +70,27 @@ namespace ModelControlApp.ViewModels
         public Project SelectedProject
         {
             get { return _selectedProject; }
-            set { SetProperty(ref _selectedProject, value); }
+            set 
+            { 
+                if(SetProperty(ref _selectedProject, value))
+                {
+                    CurrentModel3D = null;
+                }
+            
+            }
         }
 
         public Model SelectedModel
         {
             get { return _selectedModel; }
-            set { SetProperty(ref _selectedModel, value); }
+            set 
+            { 
+                if(SetProperty(ref _selectedModel, value))
+                {
+                    CurrentModel3D = null;
+                }
+            
+            }
         }
 
         public ModelVersion SelectedVersion
@@ -81,6 +105,30 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        public ObservableCollection<Project> ServerProjects
+        {
+            get { return _Serverprojects; }
+            set { SetProperty(ref _Serverprojects, value); }
+        }
+
+        public Project SelectedServerProject
+        {
+            get { return _selectedServerProject; }
+            set { SetProperty(ref _selectedServerProject, value); }
+        }
+
+        public Model SelectedServerModel
+        {
+            get { return _selectedServerModel; }
+            set { SetProperty(ref _selectedServerModel, value); }
+        }
+
+        public ModelVersion SelectedServerVersion
+        {
+            get { return _selectedServerVersion; }
+            set { SetProperty(ref _selectedServerVersion, value); }
+        }
+
         public Model3D CurrentModel3D
         {
             get { return _currentModel3D; }
@@ -90,6 +138,24 @@ namespace ModelControlApp.ViewModels
         private async void LoadInitialData()
         {
             await LoadAllModelsByOwner("User");
+        }
+
+        public bool IsLoggedIn
+        {
+            get => _isLoggedIn;
+            set => SetProperty(ref _isLoggedIn, value);
+        }
+
+        private void ExecuteOpenLoginDialog()
+        {
+            var loginView = new LoginView();
+            loginView.ShowDialog();
+        }
+
+        private void ExecuteOpenRegisterDialog()
+        {
+            var registerView = new RegisterView();
+            registerView.ShowDialog();
         }
 
         private async void LoadSelectedModelVersion()
