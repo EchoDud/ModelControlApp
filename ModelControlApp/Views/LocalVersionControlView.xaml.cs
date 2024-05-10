@@ -1,4 +1,5 @@
-﻿using ModelControlApp.Repositories;
+﻿using ModelControlApp.ApiClients;
+using ModelControlApp.Repositories;
 using ModelControlApp.Services;
 using ModelControlApp.ViewModels;
 using MongoDB.Driver;
@@ -26,7 +27,7 @@ namespace ModelControlApp
             var client = new MongoClient("mongodb://localhost:27017/");
             var databaseName = "Models";
             var fileRepository = new FileRepository(client, databaseName);
-            var fileService = new FileService(fileRepository);
+            var fileService = new FileService(fileRepository);  
             DataContext = new LocalVersionControlViewModel(fileService);
         }
     }

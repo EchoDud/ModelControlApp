@@ -1,4 +1,5 @@
-﻿using ModelControlApp.Services;
+﻿using ModelControlApp.ApiClients;
+using ModelControlApp.Services;
 using ModelControlApp.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -24,13 +25,13 @@ namespace ModelControlApp.Views
         public LoginView()
         {
             InitializeComponent();
-            var authenticationService = new AuthenticationService();
-            var viewModel = new LoginViewModel(authenticationService);
+            var authClient = new AuthApiClient("http://localhost:5000/");
+            var viewModel = new LoginViewModel(authClient);
             viewModel.RequestClose += Close;
             DataContext = viewModel;            
         }
 
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        private void PasswordBoxPasswordChanged(object sender, RoutedEventArgs e)
         {
             var passwordBox = sender as PasswordBox;
             var viewModel = DataContext as LoginViewModel;

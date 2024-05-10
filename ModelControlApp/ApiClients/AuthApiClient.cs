@@ -28,7 +28,7 @@ namespace ModelControlApp.ApiClients
         public async Task<string> RegisterAsync(RegisterDTO registerRequest)
         {
             var registerContent = new StringContent(JsonSerializer.Serialize(registerRequest), Encoding.UTF8, "application/json");
-            var registerResponse = await _httpClient.PostAsync($"{_baseUrl}/register", registerContent);
+            var registerResponse = await _httpClient.PostAsync($"{_baseUrl}/api/UserAuth/register", registerContent);
 
             if (registerResponse.IsSuccessStatusCode)
             {
@@ -45,7 +45,7 @@ namespace ModelControlApp.ApiClients
         public async Task<string> LoginAsync(LoginDTO loginRequest)
         {
             var loginContent = new StringContent(JsonSerializer.Serialize(loginRequest), Encoding.UTF8, "application/json");
-            var loginResponse = await _httpClient.PostAsync($"{_baseUrl}/login", loginContent);
+            var loginResponse = await _httpClient.PostAsync($"{_baseUrl}/api/UserAuth/login", loginContent);
 
             if (loginResponse.IsSuccessStatusCode)
             {

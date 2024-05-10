@@ -1,6 +1,8 @@
 ﻿using HelixToolkit.Wpf;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Win32;
+using ModelControlApp.ApiClients;
+using ModelControlApp.DTOs.AuthDTOs;
 using ModelControlApp.DTOs.FileDTOs;
 using ModelControlApp.Models;
 using ModelControlApp.Services;
@@ -39,6 +41,7 @@ namespace ModelControlApp.ViewModels
         public LocalVersionControlViewModel(FileService fileService)
         {
             _fileService = fileService;
+
             CreateProjectCommand = new DelegateCommand(CreateProject);
             DeleteProjectCommand = new DelegateCommand(DeleteProject, () => SelectedProject != null).ObservesProperty(() => SelectedProject);
             AddModelCommand = new DelegateCommand(AddModel, () => SelectedProject != null).ObservesProperty(() => SelectedProject);
@@ -47,7 +50,7 @@ namespace ModelControlApp.ViewModels
             ExtractModelCommand = new DelegateCommand(ExtractModel, () => SelectedVersion != null).ObservesProperty(() => SelectedVersion);
             RemoveVersionCommand = new DelegateCommand(RemoveVersion, () => SelectedVersion != null).ObservesProperty(() => SelectedVersion);
             OpenLoginDialogCommand = new DelegateCommand(ExecuteOpenLoginDialog);
-            OpenRegisterDialogCommand = new DelegateCommand(ExecuteOpenRegisterDialog);
+            OpenRegisterDialogCommand = new DelegateCommand(ExecuteOpenRegisterDialog);      
             LoadInitialData();
         }
 
@@ -60,6 +63,8 @@ namespace ModelControlApp.ViewModels
         public ICommand RemoveVersionCommand { get; }
         public ICommand OpenLoginDialogCommand { get; private set; }
         public ICommand OpenRegisterDialogCommand { get; private set; }
+        public ICommand RegisterCommand { get; private set; }
+        public ICommand LoginCommand { get; private set; }
 
         public ObservableCollection<Project> Projects
         {
@@ -154,8 +159,8 @@ namespace ModelControlApp.ViewModels
         {
             var registerView = new RegisterView();
             registerView.ShowDialog();
-        }
-
+        } 
+        
         private async void LoadSelectedModelVersion()
         {
             if (SelectedModel != null && SelectedVersion != null)

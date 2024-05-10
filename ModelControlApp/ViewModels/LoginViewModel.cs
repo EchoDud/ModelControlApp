@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
 using System.Windows.Controls;
+using ModelControlApp.ApiClients;
+using ModelControlApp.DTOs.AuthDTOs;
 
 namespace ModelControlApp.ViewModels
 {
     public class LoginViewModel : BindableBase
     {
-        private readonly IAuthenticationService _authenticationService;
+        private readonly AuthApiClient _authApiClient;
         private string _username;
         private string _password;
 
@@ -22,10 +24,11 @@ namespace ModelControlApp.ViewModels
 
         public ICommand LoginCommand { get; }
 
-        public LoginViewModel(IAuthenticationService authenticationService)
+        public LoginViewModel(AuthApiClient authApiClient)
         {
-            _authenticationService = authenticationService;
-            LoginCommand = new DelegateCommand(async () => await LoginAsync());
+
+            _authApiClient = authApiClient;
+            LoginCommand = new DelegateCommand(LoginUser);
         }
 
         public string Username
@@ -40,23 +43,26 @@ namespace ModelControlApp.ViewModels
             set { SetProperty(ref _password, value); }
         }
 
-        private async Task LoginAsync()
+        private async void LoginUser()
         {
+            try
+            {
+                var loginDto = new LoginDTO
+                {
+                    LoginOrEmail = Username, // Replace with actual user input
+                    Password = Password // Replace with actual user input
+                };
 
-            var success = await _authenticationService.LoginAsync(_username, _password);
-            if (success)
-            {
-                MessageBox.Show("Login Successful!");
+                var token = await _authApiClient.LoginAsync(loginDto);
+                MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 RequestClose?.Invoke();
-            }                
-            else
-            {
-                MessageBox.Show("Login Failed!");
             }
-            
-                
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Login failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        
+
     }
 }

@@ -8,30 +8,65 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
+using ModelControlApp.ApiClients;
+using ModelControlApp.DTOs.AuthDTOs;
 
 namespace ModelControlApp.ViewModels
 {
     public class RegisterViewModel : BindableBase
     {
-        private readonly IAuthenticationService _authenticationService;
+        private readonly AuthApiClient _authApiClient;
+        private string _login;
+        private string _email;
+        private string _password;
+
+        public event Action RequestClose;
 
         public ICommand RegisterCommand { get; }
 
-        public RegisterViewModel(IAuthenticationService authenticationService)
+        public RegisterViewModel(AuthApiClient authApiClient)
         {
-            _authenticationService = authenticationService;
-            RegisterCommand = new DelegateCommand(async () => await RegisterAsync());
+            _authApiClient = authApiClient;
+            RegisterCommand = new DelegateCommand(RegisterUser);
         }
 
-        private async Task RegisterAsync()
+        public string Login
         {
+            get { return _login; }
+            set { SetProperty(ref _login, value); }
+        }
 
-            /*var success = await _authenticationService.LoginAsync(Username, Password);*/
-            var success = true;
-            if (success)
-                MessageBox.Show("Register Successful!");
-            else
-                MessageBox.Show("Register Failed!");
+        public string Email
+        {
+            get { return _email; }
+            set { SetProperty(ref _email, value); }
+        }
+
+        public string Password
+        {
+            get { return _password; }
+            set { SetProperty(ref _password, value); }
+        }
+
+        private async void RegisterUser()
+        {
+            try
+            {
+                var registerDto = new RegisterDTO
+                {
+                    Login = Login, // User input for Login
+                    Email = Email, // User input for Email
+                    Password = Password // User input for Password
+                };
+
+                var token = await _authApiClient.RegisterAsync(registerDto);
+                MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                RequestClose?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Registration failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

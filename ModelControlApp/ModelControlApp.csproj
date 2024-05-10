@@ -9,16 +9,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DTOs\FileStorageDTOs\**" />
+    <EmbeddedResource Remove="DTOs\FileStorageDTOs\**" />
+    <None Remove="DTOs\FileStorageDTOs\**" />
+    <Page Remove="DTOs\FileStorageDTOs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HelixToolkit.Wpf" Version="2.25.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
     <PackageReference Include="MongoDB.Driver.GridFS" Version="2.25.0" />
     <PackageReference Include="Prism.Unity" Version="8.1.97" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DTOs\FileStorageDTOs\" />
   </ItemGroup>
 
 </Project>
