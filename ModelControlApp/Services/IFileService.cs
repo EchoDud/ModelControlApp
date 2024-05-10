@@ -1,4 +1,4 @@
-﻿using ModelControlApp.DTOs.FileStorageDTOs;
+﻿using ModelControlApp.DTOs.FileDTOs;
 using MongoDB.Bson;
 using MongoDB.Driver.GridFS;
 using System;
@@ -12,16 +12,16 @@ namespace ModelControlApp.Services
 {
     public interface IFileService
     {
-        Task DeleteAllOwnerFilesAsync(string owner);
-        Task DeleteFileAsync(DataFileWithoutVersionDTO dataFileWithoutVersionDTO);
-        Task DeleteFileByVersionAsync(DataFileWithVersionDTO dataFileWithVersionDTO);
-        Task<Stream> DownloadFileAsync(DataFileWithVersionDTO dataFileWithVersionDTO);
+        Task<ObjectId> UploadFileAsync(FileUploadDTO uploadFileDTO);
+        Task<Stream> DownloadFileAsync(FileQueryDTO fileQueryDTO);
+        Task<GridFSFileInfo> GetFileInfoByVersionAsync(FileQueryDTO fileQueryDTO);
+        Task<List<GridFSFileInfo>> GetFileInfoAsync(FileQueryDTO fileQueryDTO);
         Task<List<GridFSFileInfo>> GetAllOwnerFilesInfoAsync(string owner);
-        Task<List<GridFSFileInfo>> GetFileInfoAsync(DataFileWithoutVersionDTO dataFileWithoutVersionDTO);
-        Task<GridFSFileInfo> GetFileInfoByVersionAsync(DataFileWithVersionDTO dataFileWithVersionDTO);
-        Task UpdateAllOwnerFilesInfoAsync(UpdateMultipleFilesInfoDTO updateMultipleFilesInfoDTO);
-        Task UpdateFileInfoAsync(UpdateFileInfoDTO updateFileInfoDTO);
-        Task UpdateFileInfoByVersionAsync(UpdateFileInfoByVersionDTO updateFileInfoByVersionDTO);
-        Task<ObjectId> UploadFileAsync(UploadFileDTO uploadFileDTO);
+        Task UpdateFileInfoByVersionAsync(FileUpdateDTO fileUpdateDTO);
+        Task UpdateFileInfoAsync(FileUpdateDTO fileUpdateDTO);
+        Task UpdateAllOwnerFilesInfoAsync(UpdateAllFilesDTO updateAllFilesDTO);
+        Task DeleteFileByVersionAsync(FileQueryDTO fileQueryDTO);
+        Task DeleteFileAsync(FileQueryDTO fileQueryDTO);
+        Task DeleteAllOwnerFilesAsync(string owner);
     }
 }

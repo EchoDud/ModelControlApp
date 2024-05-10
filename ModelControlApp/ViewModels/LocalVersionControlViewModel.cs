@@ -1,6 +1,7 @@
 ﻿using HelixToolkit.Wpf;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Win32;
-using ModelControlApp.DTOs.FileStorageDTOs;
+using ModelControlApp.DTOs.FileDTOs;
 using ModelControlApp.Models;
 using ModelControlApp.Services;
 using ModelControlApp.Views;
@@ -44,12 +45,11 @@ namespace ModelControlApp.ViewModels
             RemoveModelCommand = new DelegateCommand(RemoveModel, () => SelectedModel != null).ObservesProperty(() => SelectedModel);
             UpdateModelCommand = new DelegateCommand(UpdateModel, () => SelectedModel != null).ObservesProperty(() => SelectedModel);
             ExtractModelCommand = new DelegateCommand(ExtractModel, () => SelectedVersion != null).ObservesProperty(() => SelectedVersion);
-            RemoveVersionCommand = new DelegateCommand(RemoveVersion, ()  => SelectedVersion!= null).ObservesProperty(() => SelectedVersion);
+            RemoveVersionCommand = new DelegateCommand(RemoveVersion, () => SelectedVersion != null).ObservesProperty(() => SelectedVersion);
             OpenLoginDialogCommand = new DelegateCommand(ExecuteOpenLoginDialog);
             OpenRegisterDialogCommand = new DelegateCommand(ExecuteOpenRegisterDialog);
             LoadInitialData();
         }
-        
 
         public ICommand CreateProjectCommand { get; }
         public ICommand DeleteProjectCommand { get; }
@@ -70,26 +70,24 @@ namespace ModelControlApp.ViewModels
         public Project SelectedProject
         {
             get { return _selectedProject; }
-            set 
-            { 
-                if(SetProperty(ref _selectedProject, value))
+            set
+            {
+                if (SetProperty(ref _selectedProject, value))
                 {
                     CurrentModel3D = null;
                 }
-            
             }
         }
 
         public Model SelectedModel
         {
             get { return _selectedModel; }
-            set 
-            { 
-                if(SetProperty(ref _selectedModel, value))
+            set
+            {
+                if (SetProperty(ref _selectedModel, value))
                 {
                     CurrentModel3D = null;
                 }
-            
             }
         }
 
@@ -164,7 +162,7 @@ namespace ModelControlApp.ViewModels
             {
                 try
                 {
-                    var modelStream = await _fileService.DownloadFileAsync(new DataFileWithVersionDTO
+                    var modelStream = await _fileService.DownloadFileAsync(new FileQueryDTO
                     {
                         Name = SelectedModel.Name,
                         Owner = SelectedModel.Owner,
@@ -208,7 +206,7 @@ namespace ModelControlApp.ViewModels
                 foreach (var fileInfo in fileInfos)
                 {
                     var projectName = fileInfo.Metadata["project"].AsString;
-                    var modelName = fileInfo.Filename; 
+                    var modelName = fileInfo.Filename;
 
                     var project = Projects.FirstOrDefault(p => p.Name == projectName);
                     if (project == null)
@@ -268,7 +266,7 @@ namespace ModelControlApp.ViewModels
             {
                 foreach (var model in SelectedProject.Models.ToList())
                 {
-                    var deleteFileDTO = new DataFileWithoutVersionDTO
+                    var deleteFileDTO = new FileQueryDTO
                     {
                         Name = model.Name,
                         Owner = model.Owner,
@@ -281,7 +279,6 @@ namespace ModelControlApp.ViewModels
                 CurrentModel3D = null;
             }
         }
-
 
         private async void AddModel()
         {
@@ -306,14 +303,14 @@ namespace ModelControlApp.ViewModels
                     }
 
                     var fileExtension = Path.GetExtension(openFileDialog.FileName).TrimStart('.');
-                    var uploadFileDTO = new UploadFileDTO
+                    var uploadFileDTO = new FileUploadDTO
                     {
                         Name = modelName,
                         Type = fileExtension,
                         Owner = "User",
                         Project = SelectedProject.Name,
                         Description = "Added via application",
-                        Stream = stream
+                        File = new FormFile(stream, 0, stream.Length, modelName, openFileDialog.FileName)
                     };
                     await _fileService.UploadFileAsync(uploadFileDTO);
                     SelectedProject.Models.Add(new Model
@@ -332,7 +329,7 @@ namespace ModelControlApp.ViewModels
         {
             if (SelectedModel != null)
             {
-                var deleteFileDTO = new DataFileWithoutVersionDTO
+                var deleteFileDTO = new FileQueryDTO
                 {
                     Name = SelectedModel.Name,
                     Owner = SelectedModel.Owner,
@@ -348,7 +345,7 @@ namespace ModelControlApp.ViewModels
         {
             if (SelectedModel != null && SelectedVersion != null)
             {
-                var deleteFileDTO = new DataFileWithVersionDTO
+                var deleteFileDTO = new FileQueryDTO
                 {
                     Name = SelectedModel.Name,
                     Owner = SelectedModel.Owner,
@@ -375,14 +372,14 @@ namespace ModelControlApp.ViewModels
                 {
                     string userDescription = Microsoft.VisualBasic.Interaction.InputBox("Enter description for the new version:", "Update Model", "Updated version");
 
-                    var uploadFileDTO = new UploadFileDTO
+                    var uploadFileDTO = new FileUploadDTO
                     {
                         Name = SelectedModel.Name,
                         Type = SelectedModel.FileType,
                         Owner = "User",
                         Project = SelectedProject.Name,
                         Description = userDescription,
-                        Stream = stream
+                        File = new FormFile(stream, 0, stream.Length, SelectedModel.Name, openFileDialog.FileName)
                     };
                     await _fileService.UploadFileAsync(uploadFileDTO);
                     SelectedModel.VersionNumber.Add(new ModelVersion
@@ -410,14 +407,13 @@ namespace ModelControlApp.ViewModels
             {
                 try
                 {
-                    DataFileWithVersionDTO test = new DataFileWithVersionDTO
+                    var stream = await _fileService.DownloadFileAsync(new FileQueryDTO
                     {
                         Name = SelectedModel.Name,
                         Owner = SelectedModel.Owner,
                         Project = SelectedModel.Project,
-                        Version = SelectedVersion.Number,
-                    };
-                    var stream = await _fileService.DownloadFileAsync(test);
+                        Version = SelectedVersion.Number
+                    });
 
                     using (var fileStream = File.Create(saveFileDialog.FileName))
                     {

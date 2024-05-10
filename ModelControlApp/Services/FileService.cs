@@ -1,4 +1,4 @@
-﻿using ModelControlApp.DTOs.FileStorageDTOs;
+﻿using ModelControlApp.DTOs.FileDTOs;
 using ModelControlApp.Repositories;
 using MongoDB.Bson;
 using MongoDB.Driver.GridFS;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ModelControlApp.Services
 {
-    public class FileService : IFileService
+    public class FileService
     {
         private readonly FileRepository _fileRepository;
 
@@ -20,7 +20,7 @@ namespace ModelControlApp.Services
             _fileRepository = fileRepository;
         }
 
-        public async Task<ObjectId> UploadFileAsync(UploadFileDTO uploadFileDTO)
+        public async Task<ObjectId> UploadFileAsync(FileUploadDTO uploadFileDTO)
         {
             try
             {
@@ -28,15 +28,15 @@ namespace ModelControlApp.Services
                     await GetLastVersionNumberAsync(uploadFileDTO.Name, uploadFileDTO.Owner, uploadFileDTO.Project) + 1;
 
                 var metadata = new BsonDocument
-                {
-                    { "file_type", uploadFileDTO.Type},
-                    { "owner", uploadFileDTO.Owner },
-                    { "project", uploadFileDTO.Project },
-                    { "version_number", lastVersionNumber},
-                    { "version_description", uploadFileDTO.Description ?? "No description provided" }
-                };
+            {
+                { "file_type", uploadFileDTO.Type },
+                { "owner", uploadFileDTO.Owner },
+                { "project", uploadFileDTO.Project },
+                { "version_number", lastVersionNumber },
+                { "version_description", uploadFileDTO.Description ?? "No description provided" }
+            };
 
-                return await _fileRepository.UploadAsync(uploadFileDTO.Name, uploadFileDTO.Stream, metadata);
+                return await _fileRepository.UploadAsync(uploadFileDTO.Name, uploadFileDTO.File.OpenReadStream(), metadata);
             }
             catch (Exception ex)
             {
@@ -45,28 +45,25 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task<Stream> DownloadFileAsync(DataFileWithVersionDTO dataFileWithVersionDTO)
+        public async Task<Stream> DownloadFileAsync(FileQueryDTO fileQueryDTO)
         {
             try
             {
-                long lastVersionNumber =
-                  await GetLastVersionNumberAsync(dataFileWithVersionDTO.Name, dataFileWithVersionDTO.Owner, dataFileWithVersionDTO.Project);
-
+                long lastVersionNumber = await GetLastVersionNumberAsync(fileQueryDTO.Name, fileQueryDTO.Owner, fileQueryDTO.Project);
                 var query = new BsonDocument
-                {
-                    { "filename", dataFileWithVersionDTO.Name },
-                    { "metadata.owner", dataFileWithVersionDTO.Owner },
-                    { "metadata.project", dataFileWithVersionDTO.Project }
-                };
+            {
+                { "filename", fileQueryDTO.Name },
+                { "metadata.owner", fileQueryDTO.Owner },
+                { "metadata.project", fileQueryDTO.Project }
+            };
 
-                if (dataFileWithVersionDTO.Version < 0)
+                if (fileQueryDTO.Version < 0)
                 {
                     query.Add("metadata.version_number", lastVersionNumber);
                 }
-
                 else
                 {
-                    query.Add("metadata.version_number", dataFileWithVersionDTO.Version);
+                    query.Add("metadata.version_number", fileQueryDTO.Version);
                 }
 
                 return await _fileRepository.DownloadAsync(query);
@@ -78,20 +75,20 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task<GridFSFileInfo> GetFileInfoByVersionAsync(DataFileWithVersionDTO dataFileWithVersionDTO)
+        public async Task<GridFSFileInfo> GetFileInfoByVersionAsync(FileQueryDTO fileQueryDTO)
         {
             try
             {
                 var query = new BsonDocument
-                {
-                    { "filename", dataFileWithVersionDTO.Name },
-                    { "metadata.owner", dataFileWithVersionDTO.Owner },
-                    { "metadata.project", dataFileWithVersionDTO.Project }
-                };
+            {
+                { "filename", fileQueryDTO.Name },
+                { "metadata.owner", fileQueryDTO.Owner },
+                { "metadata.project", fileQueryDTO.Project }
+            };
 
-                if (dataFileWithVersionDTO.Version != -1)
+                if (fileQueryDTO.Version != -1)
                 {
-                    query.Set("metadata.version_number", dataFileWithVersionDTO.Version);
+                    query.Set("metadata.version_number", fileQueryDTO.Version);
                 }
 
                 return await _fileRepository.GetAsync(query);
@@ -103,16 +100,16 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task<List<GridFSFileInfo>> GetFileInfoAsync(DataFileWithoutVersionDTO dataFileWithoutVersionDTO)
+        public async Task<List<GridFSFileInfo>> GetFileInfoAsync(FileQueryDTO fileQueryDTO)
         {
             try
             {
                 var query = new BsonDocument
-                {
-                    { "filename", dataFileWithoutVersionDTO.Name },
-                    { "metadata.owner", dataFileWithoutVersionDTO.Owner },
-                    { "metadata.project", dataFileWithoutVersionDTO.Project }
-                };
+            {
+                { "filename", fileQueryDTO.Name },
+                { "metadata.owner", fileQueryDTO.Owner },
+                { "metadata.project", fileQueryDTO.Project }
+            };
 
                 return await _fileRepository.GetMultipleAsync(query);
             }
@@ -128,9 +125,9 @@ namespace ModelControlApp.Services
             try
             {
                 var query = new BsonDocument
-                {
-                    { "metadata.owner", owner }
-                };
+            {
+                { "metadata.owner", owner }
+            };
 
                 return await _fileRepository.GetMultipleAsync(query);
             }
@@ -141,20 +138,20 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task UpdateFileInfoByVersionAsync(UpdateFileInfoByVersionDTO updateFileInfoByVersionDTO)
+        public async Task UpdateFileInfoByVersionAsync(FileUpdateDTO fileUpdateDTO)
         {
             try
             {
                 var query = new BsonDocument
-                {
-                    { "filename", updateFileInfoByVersionDTO.Name },
-                    { "metadata.owner", updateFileInfoByVersionDTO.Owner },
-                    { "metadata.project", updateFileInfoByVersionDTO.Project},
-                    { "metadata.version_number", updateFileInfoByVersionDTO.Version}
+            {
+                { "filename", fileUpdateDTO.Name },
+                { "metadata.owner", fileUpdateDTO.Owner },
+                { "metadata.project", fileUpdateDTO.Project },
+                { "metadata.version_number", fileUpdateDTO.Version }
+            };
 
-                };
-
-                await _fileRepository.UpdateAsync(query, updateFileInfoByVersionDTO.UpdatedMetadata);
+                var updatedMetadata = BsonDocument.Parse(fileUpdateDTO.UpdatedMetadata);
+                await _fileRepository.UpdateAsync(query, updatedMetadata);
             }
             catch (Exception ex)
             {
@@ -163,18 +160,19 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task UpdateFileInfoAsync(UpdateFileInfoDTO updateFileInfoDTO)
+        public async Task UpdateFileInfoAsync(FileUpdateDTO fileUpdateDTO)
         {
             try
             {
                 var query = new BsonDocument
-                {
-                    { "filename", updateFileInfoDTO.Name },
-                    { "metadata.owner", updateFileInfoDTO.Owner },
-                    { "metadata.project", updateFileInfoDTO.Project}
-                };
+            {
+                { "filename", fileUpdateDTO.Name },
+                { "metadata.owner", fileUpdateDTO.Owner },
+                { "metadata.project", fileUpdateDTO.Project }
+            };
 
-                await _fileRepository.UpdateMultipleAsync(query, updateFileInfoDTO.UpdatedMetadata);
+                var updatedMetadata = BsonDocument.Parse(fileUpdateDTO.UpdatedMetadata);
+                await _fileRepository.UpdateMultipleAsync(query, updatedMetadata);
             }
             catch (Exception ex)
             {
@@ -183,16 +181,17 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task UpdateAllOwnerFilesInfoAsync(UpdateMultipleFilesInfoDTO updateMultipleFilesInfoDTO)
+        public async Task UpdateAllOwnerFilesInfoAsync(UpdateAllFilesDTO updateAllFilesDTO)
         {
             try
             {
                 var query = new BsonDocument
-                {
-                    { "metadata.owner", updateMultipleFilesInfoDTO.Owner },
-                };
+            {
+                { "metadata.owner", updateAllFilesDTO.Owner }
+            };
 
-                await _fileRepository.UpdateMultipleAsync(query, updateMultipleFilesInfoDTO.UpdatedMetadata);
+                var updatedMetadata = BsonDocument.Parse(updateAllFilesDTO.UpdatedMetadata);
+                await _fileRepository.UpdateMultipleAsync(query, updatedMetadata);
             }
             catch (Exception ex)
             {
@@ -201,17 +200,17 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task DeleteFileByVersionAsync(DataFileWithVersionDTO dataFileWithVersionDTO)
+        public async Task DeleteFileByVersionAsync(FileQueryDTO fileQueryDTO)
         {
             try
             {
                 var query = new BsonDocument
-                {
-                    { "filename", dataFileWithVersionDTO.Name },
-                    { "metadata.owner", dataFileWithVersionDTO.Owner },
-                    { "metadata.project", dataFileWithVersionDTO.Project },
-                    { "metadata.version_number", dataFileWithVersionDTO.Version }
-                };
+            {
+                { "filename", fileQueryDTO.Name },
+                { "metadata.owner", fileQueryDTO.Owner },
+                { "metadata.project", fileQueryDTO.Project },
+                { "metadata.version_number", fileQueryDTO.Version }
+            };
 
                 await _fileRepository.DeleteAsync(query);
             }
@@ -222,16 +221,16 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task DeleteFileAsync(DataFileWithoutVersionDTO dataFileWithoutVersionDTO)
+        public async Task DeleteFileAsync(FileQueryDTO fileQueryDTO)
         {
             try
             {
                 var query = new BsonDocument
-                {
-                    { "filename", dataFileWithoutVersionDTO.Name },
-                    { "metadata.owner", dataFileWithoutVersionDTO.Owner },
-                    { "metadata.project", dataFileWithoutVersionDTO.Project }
-                };
+            {
+                { "filename", fileQueryDTO.Name },
+                { "metadata.owner", fileQueryDTO.Owner },
+                { "metadata.project", fileQueryDTO.Project }
+            };
 
                 await _fileRepository.DeleteMultipleAsync(query);
             }
@@ -247,10 +246,9 @@ namespace ModelControlApp.Services
             try
             {
                 var query = new BsonDocument
-                {
-
-                    { "metadata.owner", owner}
-                };
+            {
+                { "metadata.owner", owner }
+            };
                 await _fileRepository.DeleteMultipleAsync(query);
             }
             catch (Exception ex)
@@ -265,15 +263,13 @@ namespace ModelControlApp.Services
             try
             {
                 var query = new BsonDocument
-                {
-                    { "filename", fileName },
-                    { "metadata.owner", owner },
-                    { "metadata.project", project }
-                };
+            {
+                { "filename", fileName },
+                { "metadata.owner", owner },
+                { "metadata.project", project }
+            };
                 var files = await _fileRepository.GetMultipleAsync(query);
-
                 var sortedFiles = files.OrderByDescending(f => f.Metadata["version_number"].AsInt64);
-
                 var lastFile = sortedFiles.FirstOrDefault();
 
                 return lastFile?.Metadata["version_number"].AsInt64 ?? 0;
