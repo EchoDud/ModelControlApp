@@ -24,7 +24,6 @@ namespace ModelControlApp
         {
             // Register the ModelService with the interface IModelService
             containerRegistry.RegisterSingleton<FileService>();
-            containerRegistry.RegisterSingleton<AuthenticationService>();
 
             // Optionally, ensure MainViewModel is also registered if not done automatically
             containerRegistry.Register<LocalVersionControlView>();
