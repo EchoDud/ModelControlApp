@@ -27,8 +27,9 @@ namespace ModelControlApp
             var client = new MongoClient("mongodb://localhost:27017/");
             var databaseName = "Models";
             var fileRepository = new FileRepository(client, databaseName);
-            var fileService = new FileService(fileRepository);  
-            DataContext = new LocalVersionControlViewModel(fileService);
+            var fileService = new FileService(fileRepository);
+            var fileApiClient = new FileApiClient("http://localhost:5000/");
+            DataContext = new LocalVersionControlViewModel(fileService,fileApiClient);
         }
     }
 }

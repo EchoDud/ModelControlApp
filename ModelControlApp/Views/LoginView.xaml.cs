@@ -27,8 +27,13 @@ namespace ModelControlApp.Views
             InitializeComponent();
             var authClient = new AuthApiClient("http://localhost:5000/");
             var viewModel = new LoginViewModel(authClient);
-            viewModel.RequestClose += Close;
-            DataContext = viewModel;            
+            viewModel.RequestClose += (token) =>
+            {
+                ((LocalVersionControlViewModel)Application.Current.MainWindow.DataContext).AuthToken = token;
+                ((LocalVersionControlViewModel)Application.Current.MainWindow.DataContext).IsLoggedIn = true;
+                Close();
+            };
+            DataContext = viewModel;
         }
 
         private void PasswordBoxPasswordChanged(object sender, RoutedEventArgs e)
@@ -40,5 +45,7 @@ namespace ModelControlApp.Views
                 viewModel.Password = passwordBox.Password;
             }
         }
+
+
     }
 }

@@ -20,7 +20,7 @@ namespace ModelControlApp.ViewModels
         private string _email;
         private string _password;
 
-        public event Action RequestClose;
+        public event Action<string> RequestClose;
 
         public ICommand RegisterCommand { get; }
 
@@ -54,14 +54,14 @@ namespace ModelControlApp.ViewModels
             {
                 var registerDto = new RegisterDTO
                 {
-                    Login = Login, // User input for Login
-                    Email = Email, // User input for Email
-                    Password = Password // User input for Password
+                    Login = Login,
+                    Email = Email,
+                    Password = Password
                 };
 
                 var token = await _authApiClient.RegisterAsync(registerDto);
                 MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                RequestClose?.Invoke();
+                RequestClose?.Invoke(token);
             }
             catch (Exception ex)
             {

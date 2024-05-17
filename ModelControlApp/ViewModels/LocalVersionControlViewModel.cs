@@ -27,6 +27,7 @@ namespace ModelControlApp.ViewModels
     public class LocalVersionControlViewModel : BindableBase
     {
         private readonly FileService _fileService;
+        private readonly FileApiClient _fileApiClient;
         private Project _selectedProject;
         private Model _selectedModel;
         private ModelVersion _selectedVersion;
@@ -34,13 +35,15 @@ namespace ModelControlApp.ViewModels
         private Project _selectedServerProject;
         private Model _selectedServerModel;
         private ModelVersion _selectedServerVersion;
-        private ObservableCollection<Project> _Serverprojects = new ObservableCollection<Project>();
+        private ObservableCollection<Project> _serverProjects = new ObservableCollection<Project>();
         private Model3D _currentModel3D;
         private bool _isLoggedIn = false;
+        private string _authToken;
 
-        public LocalVersionControlViewModel(FileService fileService)
+        public LocalVersionControlViewModel(FileService fileService, FileApiClient fileApiClient)
         {
             _fileService = fileService;
+            _fileApiClient = fileApiClient;
 
             CreateProjectCommand = new DelegateCommand(CreateProject);
             DeleteProjectCommand = new DelegateCommand(DeleteProject, () => SelectedProject != null).ObservesProperty(() => SelectedProject);
@@ -49,8 +52,13 @@ namespace ModelControlApp.ViewModels
             UpdateModelCommand = new DelegateCommand(UpdateModel, () => SelectedModel != null).ObservesProperty(() => SelectedModel);
             ExtractModelCommand = new DelegateCommand(ExtractModel, () => SelectedVersion != null).ObservesProperty(() => SelectedVersion);
             RemoveVersionCommand = new DelegateCommand(RemoveVersion, () => SelectedVersion != null).ObservesProperty(() => SelectedVersion);
+            PushVersionCommand = new DelegateCommand(PushVersionToServer, CanPushVersion).ObservesProperty(() => SelectedVersion);
+            PushModelCommand = new DelegateCommand(PushModelToServer, CanPushModel).ObservesProperty(() => SelectedModel);
+            PushProjectCommand = new DelegateCommand(PushProjectToServer, CanPushProject).ObservesProperty(() => SelectedProject);
+            LoadServerProjectsCommand = new DelegateCommand(LoadServerProjects, () => IsLoggedIn).ObservesProperty(() => IsLoggedIn);
             OpenLoginDialogCommand = new DelegateCommand(ExecuteOpenLoginDialog);
-            OpenRegisterDialogCommand = new DelegateCommand(ExecuteOpenRegisterDialog);      
+            OpenRegisterDialogCommand = new DelegateCommand(ExecuteOpenRegisterDialog);
+
             LoadInitialData();
         }
 
@@ -63,13 +71,24 @@ namespace ModelControlApp.ViewModels
         public ICommand RemoveVersionCommand { get; }
         public ICommand OpenLoginDialogCommand { get; private set; }
         public ICommand OpenRegisterDialogCommand { get; private set; }
-        public ICommand RegisterCommand { get; private set; }
-        public ICommand LoginCommand { get; private set; }
+        public ICommand PushServerProjectCommand { get; private set; }
+        public ICommand PushServerModelCommand { get; private set; }
+        public ICommand PushServerVersionCommand { get; private set; }
+        public ICommand PushVersionCommand { get; private set; }
+        public ICommand PushModelCommand { get; private set; }
+        public ICommand PushProjectCommand { get; private set; }
+        public ICommand LoadServerProjectsCommand { get; private set; }
 
         public ObservableCollection<Project> Projects
         {
             get { return _projects; }
             set { SetProperty(ref _projects, value); }
+        }
+
+        public ObservableCollection<Project> ServerProjects
+        {
+            get { return _serverProjects; }
+            set { SetProperty(ref _serverProjects, value); }
         }
 
         public Project SelectedProject
@@ -108,12 +127,6 @@ namespace ModelControlApp.ViewModels
             }
         }
 
-        public ObservableCollection<Project> ServerProjects
-        {
-            get { return _Serverprojects; }
-            set { SetProperty(ref _Serverprojects, value); }
-        }
-
         public Project SelectedServerProject
         {
             get { return _selectedServerProject; }
@@ -138,29 +151,208 @@ namespace ModelControlApp.ViewModels
             set { SetProperty(ref _currentModel3D, value); }
         }
 
-        private async void LoadInitialData()
-        {
-            await LoadAllModelsByOwner("User");
-        }
-
         public bool IsLoggedIn
         {
             get => _isLoggedIn;
-            set => SetProperty(ref _isLoggedIn, value);
+            set
+            {
+                if (SetProperty(ref _isLoggedIn, value))
+                {
+                    if (value)
+                    {
+                        /*LoadServerProjects();*/
+                    }
+                }
+            }
+        }
+
+        public string AuthToken
+        {
+            get => _authToken;
+            set
+            {
+                if (SetProperty(ref _authToken, value))
+                {
+                    _fileApiClient.SetToken(value);
+                    LoadServerProjects();
+                }
+            }
+        }
+
+        private bool CanPushVersion()
+        {
+            return SelectedVersion != null && IsLoggedIn;
+        }
+
+        private bool CanPushModel()
+        {
+            return SelectedModel != null && IsLoggedIn;
+        }
+
+        private bool CanPushProject()
+        {
+            return SelectedProject != null && IsLoggedIn;
+        }
+
+        private async void LoadServerProjects()
+        {
+            try
+            {
+                var projects = await _fileApiClient.GetAllProjectsAsync();
+                ServerProjects.Clear();
+                foreach (var project in projects)
+                {
+                    ServerProjects.Add(project);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load server projects: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void PushVersionToServer()
+        {
+            try
+            {
+                // Download the selected version locally
+                var modelStream = await _fileService.DownloadFileAsync(new FileQueryDTO
+                {
+                    Name = SelectedModel.Name,
+                    Owner = SelectedModel.Owner,
+                    Project = SelectedModel.Project,
+                    Version = SelectedVersion.Number
+                });
+
+                // Upload the model to the server
+                var uploadResult = await _fileApiClient.UploadOwnerVersionAsync(new FileUploadDTO
+                {
+                    Name = SelectedModel.Name,
+                    Project = SelectedModel.Project,
+                    Type = SelectedModel.FileType,
+                    Description = SelectedVersion.Description ?? "No description provided", // Provide a default description if null
+                    File = new FormFile(modelStream, 0, modelStream.Length, SelectedModel.Name, $"{SelectedModel.Name}.{SelectedModel.FileType}"),
+                    Version = SelectedVersion.Number
+                });
+
+                MessageBox.Show("Model version pushed successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                LoadServerProjects();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to push model version: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void PushModelToServer()
+        {
+            try
+            {
+                foreach (var version in SelectedModel.VersionNumber)
+                {
+                    // Download each version locally
+                    var modelStream = await _fileService.DownloadFileAsync(new FileQueryDTO
+                    {
+                        Name = SelectedModel.Name,
+                        Owner = SelectedModel.Owner,
+                        Project = SelectedModel.Project,
+                        Version = version.Number
+                    });
+
+                    // Upload each version to the server
+                    await _fileApiClient.UploadOwnerVersionAsync(new FileUploadDTO
+                    {
+                        Name = SelectedModel.Name,
+                        Project = SelectedModel.Project,
+                        Type = SelectedModel.FileType,
+                        Description = version.Description ?? "No description provided", // Provide a default description if null
+                        File = new FormFile(modelStream, 0, modelStream.Length, SelectedModel.Name, $"{SelectedModel.Name}.{SelectedModel.FileType}"),
+                        Version = version.Number
+                    });
+                }
+
+                MessageBox.Show("All model versions pushed successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                LoadServerProjects();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to push model versions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void PushProjectToServer()
+        {
+            try
+            {
+                foreach (var model in SelectedProject.Models)
+                {
+                    foreach (var version in model.VersionNumber)
+                    {
+                        // Download each version locally
+                        var modelStream = await _fileService.DownloadFileAsync(new FileQueryDTO
+                        {
+                            Name = model.Name,
+                            Owner = model.Owner,
+                            Project = model.Project,
+                            Version = version.Number
+                        });
+
+                        // Upload each version to the server
+                        await _fileApiClient.UploadOwnerVersionAsync(new FileUploadDTO
+                        {
+                            Name = model.Name,
+                            Project = model.Project,
+                            Type = model.FileType,
+                            Description = version.Description ?? "No description provided", // Provide a default description if null
+                            File = new FormFile(modelStream, 0, modelStream.Length, model.Name, $"{model.Name}.{model.FileType}"),
+                            Version = version.Number
+                        });
+                    }
+                }
+
+                MessageBox.Show("All project models and versions pushed successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                LoadServerProjects();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to push project models and versions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+                
+
+        private async void LoadInitialData()
+        {
+            await LoadAllModelsByOwner("User");            
         }
 
         private void ExecuteOpenLoginDialog()
         {
             var loginView = new LoginView();
+            var loginViewModel = new LoginViewModel(new AuthApiClient("http://localhost:5000/"));
+            loginViewModel.RequestClose += (token) =>
+            {
+                AuthToken = token;
+                IsLoggedIn = true;
+                loginView.Close();
+            };
+            loginView.DataContext = loginViewModel;
             loginView.ShowDialog();
         }
 
         private void ExecuteOpenRegisterDialog()
         {
             var registerView = new RegisterView();
+            var registerViewModel = new RegisterViewModel(new AuthApiClient("http://localhost:5000/"));
+            registerViewModel.RequestClose += (token) =>
+            {
+                AuthToken = token;
+                IsLoggedIn = true;
+                registerView.Close();
+            };
+            registerView.DataContext = registerViewModel;
             registerView.ShowDialog();
-        } 
-        
+        }
+
         private async void LoadSelectedModelVersion()
         {
             if (SelectedModel != null && SelectedVersion != null)
@@ -263,6 +455,7 @@ namespace ModelControlApp.ViewModels
             }
 
             Projects.Add(new Project { Name = projectName });
+            LoadServerProjects();
         }
 
         private async void DeleteProject()
@@ -282,6 +475,7 @@ namespace ModelControlApp.ViewModels
 
                 Projects.Remove(SelectedProject);
                 CurrentModel3D = null;
+                LoadServerProjects();
             }
         }
 
@@ -326,6 +520,7 @@ namespace ModelControlApp.ViewModels
                         Project = SelectedProject.Name,
                         VersionNumber = new ObservableCollection<ModelVersion> { new ModelVersion { Number = 1, Description = "Initial version" } }
                     });
+                    LoadServerProjects();
                 }
             }
         }
@@ -343,6 +538,7 @@ namespace ModelControlApp.ViewModels
                 await _fileService.DeleteFileAsync(deleteFileDTO);
                 SelectedProject.Models.Remove(SelectedModel);
                 CurrentModel3D = null;
+                LoadServerProjects();
             }
         }
 
@@ -365,6 +561,7 @@ namespace ModelControlApp.ViewModels
                     RemoveModel();
                 }
                 SelectedVersion = null;
+                LoadServerProjects();
             }
         }
 
@@ -384,14 +581,16 @@ namespace ModelControlApp.ViewModels
                         Owner = "User",
                         Project = SelectedProject.Name,
                         Description = userDescription,
-                        File = new FormFile(stream, 0, stream.Length, SelectedModel.Name, openFileDialog.FileName)
+                        File = new FormFile(stream, 0, stream.Length, SelectedModel.Name, openFileDialog.FileName),
+                        Version = SelectedModel.VersionNumber.Max(v => v.Number) + 1
                     };
-                    await _fileService.UploadFileAsync(uploadFileDTO);
+                    await _fileApiClient.UploadOwnerVersionAsync(uploadFileDTO);
                     SelectedModel.VersionNumber.Add(new ModelVersion
                     {
                         Number = SelectedModel.VersionNumber.Max(v => v.Number) + 1,
                         Description = userDescription
                     });
+                    LoadServerProjects();
                 }
             }
         }

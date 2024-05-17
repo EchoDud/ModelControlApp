@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using ModelControlApp.ApiClients;
 using ModelControlApp.DTOs.AuthDTOs;
+using System.Text.Json;
 
 namespace ModelControlApp.ViewModels
 {
@@ -20,13 +21,12 @@ namespace ModelControlApp.ViewModels
         private string _username;
         private string _password;
 
-        public event Action RequestClose;
+        public event Action<string> RequestClose;
 
         public ICommand LoginCommand { get; }
 
         public LoginViewModel(AuthApiClient authApiClient)
         {
-
             _authApiClient = authApiClient;
             LoginCommand = new DelegateCommand(LoginUser);
         }
@@ -49,13 +49,15 @@ namespace ModelControlApp.ViewModels
             {
                 var loginDto = new LoginDTO
                 {
-                    LoginOrEmail = Username, // Replace with actual user input
-                    Password = Password // Replace with actual user input
+                    Login = Username,
+                    Password = Password
                 };
 
-                var token = await _authApiClient.LoginAsync(loginDto);
+                var jsonResponse = await _authApiClient.LoginAsync(loginDto);
+                var token = ExtractTokenFromJson(jsonResponse);
+
                 MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                RequestClose?.Invoke();
+                RequestClose?.Invoke(token);
             }
             catch (Exception ex)
             {
@@ -63,6 +65,10 @@ namespace ModelControlApp.ViewModels
             }
         }
 
-
+        private string ExtractTokenFromJson(string jsonResponse)
+        {
+            var jsonDocument = JsonDocument.Parse(jsonResponse);
+            return jsonDocument.RootElement.GetProperty("token").GetString();
+        }
     }
 }

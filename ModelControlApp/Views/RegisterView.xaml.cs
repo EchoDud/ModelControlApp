@@ -27,7 +27,12 @@ namespace ModelControlApp.Views
             InitializeComponent();
             var authClient = new AuthApiClient("http://localhost:5000/");
             var viewModel = new RegisterViewModel(authClient);
-            viewModel.RequestClose += Close;
+            viewModel.RequestClose += (token) =>
+            {
+                ((LocalVersionControlViewModel)Application.Current.MainWindow.DataContext).AuthToken = token;
+                ((LocalVersionControlViewModel)Application.Current.MainWindow.DataContext).IsLoggedIn = true;
+                Close();
+            };
             DataContext = viewModel;
         }
 

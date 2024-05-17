@@ -13,8 +13,7 @@ namespace ModelControlApp.DTOs.FileDTOs
         [Required]
         public string Name { get; set; }
 
-        [Required]
-        public string Owner { get; set; }
+        public string? Owner { get; set; }
 
         [Required]
         public string Project { get; set; }
@@ -26,5 +25,7 @@ namespace ModelControlApp.DTOs.FileDTOs
 
         [Required]
         public IFormFile File { get; set; }
+
+        public long? Version { get; set; }
     }
 }

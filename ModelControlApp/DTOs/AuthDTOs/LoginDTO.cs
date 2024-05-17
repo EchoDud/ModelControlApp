@@ -9,10 +9,13 @@ namespace ModelControlApp.DTOs.AuthDTOs
 {
     public class LoginDTO
     {
-        [Required(ErrorMessage = "Login or email is required")]
-        public string LoginOrEmail { get; set; }
+        [Required(ErrorMessage = "Login is required")]
+        [StringLength(30, MinimumLength = 3, ErrorMessage = "Login length must be between 3 and 30 characters")]
+        [RegularExpression(@"\S+", ErrorMessage = "Login cannot consist only of whitespace characters")]
+        public string Login { get; set; } = null!;
 
         [Required(ErrorMessage = "Password is required")]
-        public string Password { get; set; }
+        [StringLength(256, MinimumLength = 8, ErrorMessage = "Password length must be between 8 and 256 characters")]
+        public string Password { get; set; } = null!;
     }
 }
