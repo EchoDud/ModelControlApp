@@ -14,6 +14,8 @@ using ModelControlApp.Infrastructure;
 using ModelControlApp.Models;
 using System.Collections.ObjectModel;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace ModelControlApp.ApiClients
 {
@@ -71,77 +73,121 @@ namespace ModelControlApp.ApiClients
             var url = $"{_baseUrl}/api/file/all/info";
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
-            var rawJson = await response.Content.ReadAsStringAsync();
 
-            // Логируем сырые данные JSON для отладки
-            Console.WriteLine("Raw JSON:");
-            Console.WriteLine(rawJson);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
 
-            using (JsonDocument document = JsonDocument.Parse(rawJson))
+            if (string.IsNullOrWhiteSpace(jsonResponse))
             {
-                JsonElement root = document.RootElement;
+                throw new Exception("The JSON response from the server is empty.");
+            }
 
-                // Проверка на наличие ключа "$values"
-                if (root.TryGetProperty("$values", out JsonElement valuesElement) && valuesElement.ValueKind == JsonValueKind.Array)
+            // Preprocess the JSON response
+            jsonResponse = PreprocessJson(jsonResponse);
+
+            // Log the preprocessed JSON response for debugging
+            Console.WriteLine("Preprocessed JSON Response: " + jsonResponse);
+
+            ApiResponseDTO apiResponse;
+            try
+            {
+                apiResponse = JsonSerializer.Deserialize<ApiResponseDTO>(jsonResponse, new JsonSerializerOptions
                 {
-                    var projects = new List<Project>();
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deserializing JSON response: {ex.Message}");
+            }
 
-                    foreach (JsonElement fileElement in valuesElement.EnumerateArray())
-                    {
-                        // Проверка на наличие метаданных
-                        if (fileElement.TryGetProperty("metadata", out JsonElement metadataElement) && metadataElement.ValueKind == JsonValueKind.Object)
-                        {
-                            // Извлекаем значения метаданных
-                            string projectName = metadataElement.GetProperty("project").GetString();
-                            string fileName = fileElement.GetProperty("filename").GetString();
-                            string fileType = metadataElement.GetProperty("file_type").GetString();
-                            string owner = metadataElement.GetProperty("owner").GetString();
-                            int versionNumber = metadataElement.GetProperty("version_number").GetInt32();
-                            string versionDescription = metadataElement.GetProperty("version_description").GetString();
+            if (apiResponse.Values == null)
+            {
+                throw new Exception("The 'Values' property in the API response is null.");
+            }
 
-                            // Логируем извлеченные значения для отладки
-                            Console.WriteLine($"Project: {projectName}, File: {fileName}, Type: {fileType}, Owner: {owner}, Version: {versionNumber}, Description: {versionDescription}");
-
-                            // Находим проект в списке или создаем новый
-                            var project = projects.FirstOrDefault(p => p.Name == projectName);
-                            if (project == null)
-                            {
-                                project = new Project { Name = projectName };
-                                projects.Add(project);
-                            }
-
-                            // Находим модель в проекте или создаем новую
-                            var model = project.Models.FirstOrDefault(m => m.Name == fileName);
-                            if (model == null)
-                            {
-                                model = new Model
-                                {
-                                    Name = fileName,
-                                    FileType = fileType,
-                                    Owner = owner,
-                                    Project = projectName
-                                };
-                                project.Models.Add(model);
-                            }
-
-                            // Добавляем версию модели
-                            model.VersionNumber.Add(new ModelVersion
-                            {
-                                Number = versionNumber,
-                                Description = versionDescription
-                            });
-                        }
-                    }
-
-                    return projects;
+            var fileInfos = new List<FileInfoDTO>();
+            foreach (var value in apiResponse.Values)
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    continue;
                 }
-                else
+
+                try
                 {
-                    throw new InvalidOperationException("Unexpected JSON structure or missing '$values' key");
+                    // Preprocess each individual value before deserialization
+                    var preprocessedValue = PreprocessJson(value);
+
+                    // Log the preprocessed individual value for debugging
+                    Console.WriteLine("Preprocessed Individual Value: " + preprocessedValue);
+
+                    var fileInfo = JsonSerializer.Deserialize<FileInfoDTO>(preprocessedValue, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (fileInfo != null)
+                    {
+                        fileInfos.Add(fileInfo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log the specific value that caused the issue
+                    throw new Exception($"Error deserializing individual file info: {ex.Message}. Value: {value}");
                 }
             }
+
+            var projects = new List<Project>();
+
+            foreach (var fileInfo in fileInfos)
+            {
+                var project = projects.FirstOrDefault(p => p.Name == fileInfo.Metadata.Project);
+                if (project == null)
+                {
+                    project = new Project { Name = fileInfo.Metadata.Project, Models = new ObservableCollection<Model>() };
+                    projects.Add(project);
+                }
+
+                var model = project.Models.FirstOrDefault(m => m.Name == fileInfo.Filename);
+                if (model == null)
+                {
+                    model = new Model
+                    {
+                        Name = fileInfo.Filename,
+                        FileType = fileInfo.Metadata.FileType,
+                        Owner = fileInfo.Metadata.Owner,
+                        Project = fileInfo.Metadata.Project,
+                        VersionNumber = new ObservableCollection<ModelVersion>()
+                    };
+                    project.Models.Add(model);
+                }
+
+                var version = new ModelVersion
+                {
+                    Number = fileInfo.Metadata.VersionNumber,
+                    Description = fileInfo.Metadata.VersionDescription
+                };
+
+                model.VersionNumber.Add(version);
+            }
+
+            return projects;
         }
 
+        public static string PreprocessJson(string json)
+        {
+            // Replace ObjectId("...") with "..."
+            json = Regex.Replace(json, @"ObjectId\(""(.+?)""\)", @"""$1""");
+
+            // Replace ISODate("...") with "..."
+            json = Regex.Replace(json, @"ISODate\(""(.+?)""\)", @"""$1""");
+
+            // Replace NumberLong(...) with ...
+            json = Regex.Replace(json, @"NumberLong\((\d+)\)", @"$1");
+
+            return json;
+        }
 
         /*public async Task<Stream> DownloadOwnerFileAsync(FileQueryDTO queryRequest)
         {
@@ -226,4 +272,36 @@ namespace ModelControlApp.ApiClients
             response.EnsureSuccessStatusCode();
         }*/
     }
+
+
+    public class ApiResponseDTO
+    {
+        [JsonPropertyName("$id")]
+        public string Id { get; set; }
+
+        [JsonPropertyName("$values")]
+        public List<string> Values { get; set; }
+    }
+
+    public class FileMetadata
+    {
+        public string FileType { get; set; }
+        public string Owner { get; set; }
+        public string Project { get; set; }
+        public int VersionNumber { get; set; }
+        public string VersionDescription { get; set; }
+    }
+
+    public class FileInfoDTO
+    {
+        public string Id { get; set; }
+        public long Length { get; set; }
+        public long ChunkSize { get; set; }
+        public DateTime UploadDate { get; set; }
+        public string Md5 { get; set; }
+        public string Filename { get; set; }
+        public FileMetadata Metadata { get; set; }
+    }
+
+    
 }
