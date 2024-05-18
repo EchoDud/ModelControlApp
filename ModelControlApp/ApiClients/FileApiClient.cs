@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using ModelControlApp.DTOs.JsonDTOs;
 
 namespace ModelControlApp.ApiClients
 {
@@ -82,7 +83,7 @@ namespace ModelControlApp.ApiClients
             }
 
             // Preprocess the JSON response
-            jsonResponse = PreprocessJson(jsonResponse);
+            jsonResponse = JsonPreprocessor.PreprocessJson(jsonResponse);
 
             // Log the preprocessed JSON response for debugging
             Console.WriteLine("Preprocessed JSON Response: " + jsonResponse);
@@ -105,7 +106,7 @@ namespace ModelControlApp.ApiClients
                 throw new Exception("The 'Values' property in the API response is null.");
             }
 
-            var fileInfos = new List<FileInfoDTO>();
+            var fileInfos = new List<DTOs.JsonDTOs.FileInfoDTO>();
             foreach (var value in apiResponse.Values)
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -116,12 +117,12 @@ namespace ModelControlApp.ApiClients
                 try
                 {
                     // Preprocess each individual value before deserialization
-                    var preprocessedValue = PreprocessJson(value);
+                    var preprocessedValue = JsonPreprocessor.PreprocessJson(value);
 
                     // Log the preprocessed individual value for debugging
                     Console.WriteLine("Preprocessed Individual Value: " + preprocessedValue);
 
-                    var fileInfo = JsonSerializer.Deserialize<FileInfoDTO>(preprocessedValue, new JsonSerializerOptions
+                    var fileInfo = JsonSerializer.Deserialize<DTOs.JsonDTOs.FileInfoDTO>(preprocessedValue, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
@@ -169,24 +170,13 @@ namespace ModelControlApp.ApiClients
                     Description = fileInfo.Metadata.Version_Description
                 };
 
-                model.VersionNumber.Add(version);
+                // Insert the version into the collection in sorted order
+                var index = model.VersionNumber.Select(v => v.Number).ToList().BinarySearch(version.Number);
+                if (index < 0) index = ~index;
+                model.VersionNumber.Insert(index, version);
             }
 
             return projects;
-        }
-
-        public static string PreprocessJson(string json)
-        {
-            // Replace ObjectId("...") with "..."
-            json = Regex.Replace(json, @"ObjectId\(""(.+?)""\)", @"""$1""");
-
-            // Replace ISODate("...") with "..."
-            json = Regex.Replace(json, @"ISODate\(""(.+?)""\)", @"""$1""");
-
-            // Replace NumberLong(...) with ...
-            json = Regex.Replace(json, @"NumberLong\((\d+)\)", @"$1");
-
-            return json;
         }
 
         /*public async Task<Stream> DownloadOwnerFileAsync(FileQueryDTO queryRequest)
@@ -274,34 +264,7 @@ namespace ModelControlApp.ApiClients
     }
 
 
-    public class ApiResponseDTO
-    {
-        [JsonPropertyName("$id")]
-        public string Id { get; set; }
-
-        [JsonPropertyName("$values")]
-        public List<string> Values { get; set; }
-    }
-
-    public class FileMetadata
-    {
-        public string File_Type { get; set; }
-        public string Owner { get; set; }
-        public string Project { get; set; }
-        public int Version_Number { get; set; }
-        public string Version_Description { get; set; }
-    }
-
-    public class FileInfoDTO
-    {
-        public string _Id { get; set; }
-        public long Length { get; set; }
-        public long ChunkSize { get; set; }
-        public DateTime UploadDate { get; set; }
-        public string Md5 { get; set; }
-        public string Filename { get; set; }
-        public FileMetadata Metadata { get; set; }
-    }
+    
 
     
 }
