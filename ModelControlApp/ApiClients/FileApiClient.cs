@@ -155,7 +155,7 @@ namespace ModelControlApp.ApiClients
                     model = new Model
                     {
                         Name = fileInfo.Filename,
-                        FileType = fileInfo.Metadata.FileType,
+                        FileType = fileInfo.Metadata.File_Type,
                         Owner = fileInfo.Metadata.Owner,
                         Project = fileInfo.Metadata.Project,
                         VersionNumber = new ObservableCollection<ModelVersion>()
@@ -165,8 +165,8 @@ namespace ModelControlApp.ApiClients
 
                 var version = new ModelVersion
                 {
-                    Number = fileInfo.Metadata.VersionNumber,
-                    Description = fileInfo.Metadata.VersionDescription
+                    Number = fileInfo.Metadata.Version_Number,
+                    Description = fileInfo.Metadata.Version_Description
                 };
 
                 model.VersionNumber.Add(version);
@@ -285,16 +285,16 @@ namespace ModelControlApp.ApiClients
 
     public class FileMetadata
     {
-        public string FileType { get; set; }
+        public string File_Type { get; set; }
         public string Owner { get; set; }
         public string Project { get; set; }
-        public int VersionNumber { get; set; }
-        public string VersionDescription { get; set; }
+        public int Version_Number { get; set; }
+        public string Version_Description { get; set; }
     }
 
     public class FileInfoDTO
     {
-        public string Id { get; set; }
+        public string _Id { get; set; }
         public long Length { get; set; }
         public long ChunkSize { get; set; }
         public DateTime UploadDate { get; set; }
