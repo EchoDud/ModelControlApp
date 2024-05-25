@@ -41,15 +41,33 @@ namespace ModelControlApp.ApiClients
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
+        public async Task DeleteFileOrVersionAsync(FileQueryDTO queryRequest)
+        {
+            var query = $"?Name={queryRequest.Name}&Type={queryRequest.Type}&Project={queryRequest.Project}";
+            if (queryRequest.Version != null && queryRequest.Version >= 0)
+            {
+                query += $"&Version={queryRequest.Version}";
+                var response = await _httpClient.DeleteAsync($"{_baseUrl}/api/File/delete/version{query}");
+                response.EnsureSuccessStatusCode();
+            }
+            else
+            {
+                var response = await _httpClient.DeleteAsync($"{_baseUrl}/api/File/delete{query}");
+                response.EnsureSuccessStatusCode();
+            }
+        }
+
+        // Other existing methods...
+
         public async Task<string> UploadOwnerVersionAsync(FileUploadDTO uploadRequest)
         {
             using var content = new MultipartFormDataContent();
 
             content.Add(new StringContent(uploadRequest.Name), "Name");
             content.Add(new StringContent(uploadRequest.Project), "Project");
-            content.Add(new StringContent(uploadRequest.Type), "Type");            
+            content.Add(new StringContent(uploadRequest.Type), "Type");
 
-            if (!string.IsNullOrEmpty(uploadRequest.Version.ToString()))
+            if (uploadRequest.Version != null)
             {
                 content.Add(new StringContent(uploadRequest.Version.ToString()), "Version");
             }
@@ -58,10 +76,10 @@ namespace ModelControlApp.ApiClients
             {
                 content.Add(new StringContent(uploadRequest.Description), "Description");
             }
-            
+
             content.Add(new StreamContent(uploadRequest.File.OpenReadStream()), "File", uploadRequest.File.FileName);
 
-            var response = await _httpClient.PostAsync($"{_baseUrl}/api/file/upload", content);
+            var response = await _httpClient.PostAsync($"{_baseUrl}/api/File/upload", content);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadAsStringAsync();
@@ -71,7 +89,7 @@ namespace ModelControlApp.ApiClients
 
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         {
-            var url = $"{_baseUrl}/api/file/all/info";
+            var url = $"{_baseUrl}/api/File/all/info";
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
@@ -179,92 +197,11 @@ namespace ModelControlApp.ApiClients
             return projects;
         }
 
-        /*public async Task<Stream> DownloadOwnerFileAsync(FileQueryDTO queryRequest)
-        {
-            var url = $"{_baseUrl}/api/file/download?Name={queryRequest.Name}&Project={queryRequest.Project}&Version={queryRequest.Version}";
-            if (!string.IsNullOrEmpty(queryRequest.Owner))
-            {
-                url += $"&Owner={queryRequest.Owner}";
-            }
-
-            var response = await _httpClient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsStreamAsync();
-        }
-
-        public async Task<string> GetOwnerFileInfoAsync(FileQueryDTO queryRequest)
-        {
-            var url = $"{_baseUrl}/api/file/info?Name={queryRequest.Name}&Project={queryRequest.Project}&Version={queryRequest.Version}";
-            if (!string.IsNullOrEmpty(queryRequest.Owner))
-            {
-                url += $"&Owner={queryRequest.Owner}";
-            }
-
-            var response = await _httpClient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsStringAsync();
-        }
-
-        public async Task<string> GetOwnerAllFilesInfoAsync(string owner)
-        {
-            var url = $"{_baseUrl}/api/file/all-info?owner={owner}";
-            var response = await _httpClient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsStringAsync();
-        }
-
-        public async Task UpdateOwnerFileInfoAsync(FileUpdateDTO updateRequest)
-        {
-            var content = JsonContent.Create(new
-            {
-                updateRequest.Name,
-                updateRequest.Project,
-                updateRequest.Version,
-                Owner = updateRequest.Owner,
-                UpdatedMetadata = updateRequest.UpdatedMetadata
-            });
-
-            var response = await _httpClient.PutAsync($"{_baseUrl}/api/file/update-info", content);
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task UpdateOwnerAllFilesInfoAsync(string owner, string updatedMetadataJson)
-        {
-            var content = JsonContent.Create(new
-            {
-                Owner = owner,
-                UpdatedMetadata = updatedMetadataJson
-            });
-
-            var response = await _httpClient.PutAsync($"{_baseUrl}/api/file/update-all-info", content);
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task DeleteOwnerFileAsync(FileQueryDTO queryRequest)
-        {
-            var url = $"{_baseUrl}/api/file/delete?Name={queryRequest.Name}&Project={queryRequest.Project}&Version={queryRequest.Version}";
-            if (!string.IsNullOrEmpty(queryRequest.Owner))
-            {
-                url += $"&Owner={queryRequest.Owner}";
-            }
-
-            var response = await _httpClient.DeleteAsync(url);
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task DeleteOwnerAllFilesAsync(string owner)
-        {
-            var url = $"{_baseUrl}/api/file/delete-all?owner={owner}";
-            var response = await _httpClient.DeleteAsync(url);
-            response.EnsureSuccessStatusCode();
-        }*/
+        // Other existing methods...
     }
 
 
-    
 
-    
+
+
 }

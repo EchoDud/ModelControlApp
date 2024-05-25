@@ -9,15 +9,10 @@ namespace ModelControlApp.DTOs.FileDTOs
 {
     public class FileQueryDTO
     {
-        [Required]
         public string Name { get; set; }
-
-        [Required]
-        public string? Owner { get; set; }
-
-        [Required]
+        public string Type { get; set; }
         public string Project { get; set; }
-
-        public long Version { get; set; } = -1;
+        public long? Version { get; set; }
+        public string? Owner { get; set; }
     }
 }

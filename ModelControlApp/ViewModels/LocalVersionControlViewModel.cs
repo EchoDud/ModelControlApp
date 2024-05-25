@@ -58,6 +58,9 @@ namespace ModelControlApp.ViewModels
             LoadServerProjectsCommand = new DelegateCommand(LoadServerProjects, () => IsLoggedIn).ObservesProperty(() => IsLoggedIn);
             OpenLoginDialogCommand = new DelegateCommand(ExecuteOpenLoginDialog);
             OpenRegisterDialogCommand = new DelegateCommand(ExecuteOpenRegisterDialog);
+            DeleteServerModelCommand = new DelegateCommand(DeleteServerModel, CanDeleteServerModel).ObservesProperty(() => SelectedServerModel);
+            DeleteServerVersionCommand = new DelegateCommand(DeleteServerVersion, CanDeleteServerVersion).ObservesProperty(() => SelectedServerVersion);
+            DeleteServerProjectCommand = new DelegateCommand(DeleteServerProject, CanDeleteServerProject).ObservesProperty(() => SelectedServerProject);
 
             LoadInitialData();
         }
@@ -78,6 +81,9 @@ namespace ModelControlApp.ViewModels
         public ICommand PushModelCommand { get; private set; }
         public ICommand PushProjectCommand { get; private set; }
         public ICommand LoadServerProjectsCommand { get; private set; }
+        public ICommand DeleteServerModelCommand { get; private set; }
+        public ICommand DeleteServerVersionCommand { get; private set; }
+        public ICommand DeleteServerProjectCommand { get; private set; }
 
         public ObservableCollection<Project> Projects
         {
@@ -192,6 +198,21 @@ namespace ModelControlApp.ViewModels
         private bool CanPushProject()
         {
             return SelectedProject != null && IsLoggedIn;
+        }
+
+        private bool CanDeleteServerModel()
+        {
+            return SelectedServerModel != null && IsLoggedIn;
+        }
+
+        private bool CanDeleteServerVersion()
+        {
+            return SelectedServerVersion != null && IsLoggedIn;
+        }
+
+        private bool CanDeleteServerProject()
+        {
+            return SelectedServerProject != null && IsLoggedIn;
         }
 
         private async void LoadServerProjects()
@@ -318,11 +339,94 @@ namespace ModelControlApp.ViewModels
                 MessageBox.Show($"Failed to push project models and versions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-                
+
+        private async void DeleteServerModel()
+        {
+            if (SelectedServerModel != null)
+            {
+                try
+                {
+                    await _fileApiClient.DeleteFileOrVersionAsync(new FileQueryDTO
+                    {
+                        Name = SelectedServerModel.Name,
+                        Owner = SelectedServerModel.Owner,
+                        Project = SelectedServerModel.Project,
+                        Type = SelectedServerModel.FileType
+                    });
+                    MessageBox.Show("Model deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    LoadServerProjects();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to delete model: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private async void DeleteServerVersion()
+        {
+            if (SelectedServerVersion != null)
+            {
+                try
+                {
+                    await _fileApiClient.DeleteFileOrVersionAsync(new FileQueryDTO
+                    {
+                        Name = SelectedServerModel.Name,
+                        Owner = SelectedServerModel.Owner,
+                        Project = SelectedServerModel.Project,
+                        Version = SelectedServerVersion.Number,
+                        Type = SelectedServerModel.FileType
+                    });
+                    MessageBox.Show("Version deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    LoadServerProjects();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to delete version: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private async void DeleteServerProject()
+        {
+            if (SelectedServerProject != null)
+            {
+                try
+                {
+                    foreach (var model in SelectedServerProject.Models)
+                    {
+                        foreach (var version in model.VersionNumber)
+                        {
+                            await _fileApiClient.DeleteFileOrVersionAsync(new FileQueryDTO
+                            {
+                                Name = model.Name,
+                                Owner = model.Owner,
+                                Project = model.Project,
+                                Version = version.Number,
+                                Type = model.FileType
+                            });
+                        }
+                        await _fileApiClient.DeleteFileOrVersionAsync(new FileQueryDTO
+                        {
+                            Name = model.Name,
+                            Owner = model.Owner,
+                            Project = model.Project,
+                            Type = model.FileType
+                        });
+                    }
+                    MessageBox.Show("Project deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    LoadServerProjects();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to delete project: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
 
         private async void LoadInitialData()
         {
-            await LoadAllModelsByOwner("User");            
+            await LoadAllModelsByOwner("User");
         }
 
         private void ExecuteOpenLoginDialog()

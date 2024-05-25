@@ -10,22 +10,12 @@ namespace ModelControlApp.DTOs.FileDTOs
 {
     public class FileUploadDTO
     {
-        [Required]
         public string Name { get; set; }
-
-        public string? Owner { get; set; }
-
-        [Required]
-        public string Project { get; set; }
-
-        [Required]
         public string Type { get; set; }
-
-        public string Description { get; set; }
-
-        [Required]
+        public string Project { get; set; }
         public IFormFile File { get; set; }
-
+        public string? Description { get; set; }
+        public string? Owner { get; set; }
         public long? Version { get; set; }
     }
 }

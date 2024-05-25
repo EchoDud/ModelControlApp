@@ -55,12 +55,12 @@
             <ListView ItemsSource="{Binding ServerProjects}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedServerProject}" Margin="10"/>
             <Button Content="Clone Model" Command="{Binding CloneServerModelCommand}" Margin="10"/>
             <Button Content="Push Model" Command="{Binding PushModelCommand}" Margin="10"/>
-            <Button Content="Remove Model" Command="{Binding RemoveServerModelCommand}" Margin="10"/>
+            <Button Content="Remove Model" Command="{Binding DeleteServerModelCommand}" Margin="10"/>
             <TextBlock Text="Models" Margin="10,20,10,0"/>
             <ListView ItemsSource="{Binding SelectedServerProject.Models}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedServerModel}" Margin="10"/>
             <Button Content="Push Version" Command="{Binding PushVersionCommand}" Margin="10"/>
             <Button Content="Clone Version" Command="{Binding CloneServerModelCommand}" Margin="10"/>
-            <Button Content="Remove Version" Command="{Binding RemoveServerVersionCommand}" Margin="10"/>
+            <Button Content="Remove Version" Command="{Binding DeleteServerVersionCommand}" Margin="10"/>
             <TextBlock Text="Versions" Margin="10,20,10,0"/>
             <ListView ItemsSource="{Binding SelectedServerModel.VersionNumber}" SelectedItem="{Binding SelectedServerVersion}" Margin="10">
                 <ListView.View>

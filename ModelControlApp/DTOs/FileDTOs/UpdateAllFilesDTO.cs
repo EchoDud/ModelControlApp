@@ -9,10 +9,8 @@ namespace ModelControlApp.DTOs.FileDTOs
 {
     public class UpdateAllFilesDTO
     {
-        [Required]
-        public string? Owner { get; set; }
-
-        [Required]
         public string UpdatedMetadata { get; set; }
+        public string Project { get; set; }
+        public string? Owner { get; set; }
     }
 }
