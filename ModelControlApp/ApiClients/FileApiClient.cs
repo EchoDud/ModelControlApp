@@ -17,6 +17,8 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using ModelControlApp.DTOs.JsonDTOs;
+using MongoDB.Bson.Serialization;
+using MongoDB.Driver.GridFS;
 
 namespace ModelControlApp.ApiClients
 {
@@ -197,7 +199,25 @@ namespace ModelControlApp.ApiClients
             return projects;
         }
 
-        // Other existing methods...
+        public async Task<(Stream, GridFSFileInfo)> DownloadFileWithMetadataAsync(FileQueryDTO fileQueryDto)
+        {
+            var query = $"?Name={fileQueryDto.Name}&Type={fileQueryDto.Type}&Project={fileQueryDto.Project}&Version={fileQueryDto.Version}";
+            var response = await _httpClient.GetAsync($"{_baseUrl}/api/File/download{query}");
+
+            response.EnsureSuccessStatusCode();
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            var metadataJson = response.Headers.GetValues("File-Metadata").FirstOrDefault();
+
+            if (string.IsNullOrEmpty(metadataJson))
+            {
+                throw new InvalidOperationException("Response does not contain metadata.");
+            }
+
+            var fileInfo = BsonSerializer.Deserialize<GridFSFileInfo>(metadataJson);
+
+            return (stream, fileInfo);
+        }
     }
 
 

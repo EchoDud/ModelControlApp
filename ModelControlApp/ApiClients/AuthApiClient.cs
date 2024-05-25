@@ -58,5 +58,6 @@ namespace ModelControlApp.ApiClients
                 throw new Exception($"Login failed. Error: {error}");
             }
         }
+
     }
 }

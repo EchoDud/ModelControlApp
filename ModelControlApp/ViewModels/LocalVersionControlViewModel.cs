@@ -52,12 +52,16 @@ namespace ModelControlApp.ViewModels
             UpdateModelCommand = new DelegateCommand(UpdateModel, () => SelectedModel != null).ObservesProperty(() => SelectedModel);
             ExtractModelCommand = new DelegateCommand(ExtractModel, () => SelectedVersion != null).ObservesProperty(() => SelectedVersion);
             RemoveVersionCommand = new DelegateCommand(RemoveVersion, () => SelectedVersion != null).ObservesProperty(() => SelectedVersion);
+            CloneVersionCommand = new DelegateCommand(CloneVersion, () => SelectedServerVersion != null).ObservesProperty(() => SelectedServerVersion);
+            CloneModelCommand = new DelegateCommand(CloneModel, () => SelectedServerModel != null).ObservesProperty(() => SelectedServerModel);
+            CloneProjectCommand = new DelegateCommand(CloneProject, () => SelectedServerProject != null).ObservesProperty(() => SelectedServerProject);
             PushVersionCommand = new DelegateCommand(PushVersionToServer, CanPushVersion).ObservesProperty(() => SelectedVersion);
             PushModelCommand = new DelegateCommand(PushModelToServer, CanPushModel).ObservesProperty(() => SelectedModel);
             PushProjectCommand = new DelegateCommand(PushProjectToServer, CanPushProject).ObservesProperty(() => SelectedProject);
             LoadServerProjectsCommand = new DelegateCommand(LoadServerProjects, () => IsLoggedIn).ObservesProperty(() => IsLoggedIn);
             OpenLoginDialogCommand = new DelegateCommand(ExecuteOpenLoginDialog);
             OpenRegisterDialogCommand = new DelegateCommand(ExecuteOpenRegisterDialog);
+            LogoutCommand = new DelegateCommand(ExecuteLogout);
             DeleteServerModelCommand = new DelegateCommand(DeleteServerModel, CanDeleteServerModel).ObservesProperty(() => SelectedServerModel);
             DeleteServerVersionCommand = new DelegateCommand(DeleteServerVersion, CanDeleteServerVersion).ObservesProperty(() => SelectedServerVersion);
             DeleteServerProjectCommand = new DelegateCommand(DeleteServerProject, CanDeleteServerProject).ObservesProperty(() => SelectedServerProject);
@@ -72,6 +76,9 @@ namespace ModelControlApp.ViewModels
         public ICommand UpdateModelCommand { get; }
         public ICommand ExtractModelCommand { get; private set; }
         public ICommand RemoveVersionCommand { get; }
+        public ICommand CloneVersionCommand { get; private set; }
+        public ICommand CloneModelCommand { get; private set; }
+        public ICommand CloneProjectCommand { get; private set; }
         public ICommand OpenLoginDialogCommand { get; private set; }
         public ICommand OpenRegisterDialogCommand { get; private set; }
         public ICommand PushServerProjectCommand { get; private set; }
@@ -84,6 +91,7 @@ namespace ModelControlApp.ViewModels
         public ICommand DeleteServerModelCommand { get; private set; }
         public ICommand DeleteServerVersionCommand { get; private set; }
         public ICommand DeleteServerProjectCommand { get; private set; }
+        public ICommand LogoutCommand { get; private set; }
 
         public ObservableCollection<Project> Projects
         {
@@ -180,7 +188,10 @@ namespace ModelControlApp.ViewModels
                 if (SetProperty(ref _authToken, value))
                 {
                     _fileApiClient.SetToken(value);
-                    LoadServerProjects();
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        LoadServerProjects();
+                    }
                 }
             }
         }
@@ -230,6 +241,17 @@ namespace ModelControlApp.ViewModels
             {
                 MessageBox.Show($"Failed to load server projects: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void ExecuteLogout()
+        {
+            AuthToken = null;
+            IsLoggedIn = false;
+            ServerProjects.Clear();
+            SelectedServerProject = null;
+            SelectedServerModel = null;
+            SelectedServerVersion = null;
+            MessageBox.Show("Logged out successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private async void PushVersionToServer()
@@ -535,6 +557,7 @@ namespace ModelControlApp.ViewModels
             }
 
             Projects.Add(new Project { Name = projectName });
+            LoadServerProjects();
         }
 
         private async void DeleteProject()
@@ -674,5 +697,152 @@ namespace ModelControlApp.ViewModels
                 }
             }
         }
+
+        private async void CloneVersion()
+        {
+            if (SelectedServerModel != null && SelectedServerVersion != null)
+            {
+                try
+                {
+                    // Create a FileQueryDTO to specify the file to download
+                    var fileQueryDto = new FileQueryDTO
+                    {
+                        Name = SelectedServerModel.Name,
+                        Owner = SelectedServerModel.Owner,
+                        Type = SelectedServerModel.FileType,
+                        Project = SelectedServerModel.Project,
+                        Version = SelectedServerVersion.Number
+                    };
+
+                    // Download the version from the server
+                    var (modelStream, fileInfo) = await _fileApiClient.DownloadFileWithMetadataAsync(fileQueryDto);
+
+                    // Ensure the stream is at the beginning
+                    modelStream.Position = 0;
+
+                    // Upload the version to the local database
+                    await _fileService.UploadFileAsync(
+                        SelectedServerModel.Name,
+                        "User",
+                        SelectedServerModel.FileType,
+                        SelectedServerModel.Project,
+                        modelStream,
+                        SelectedServerVersion.Description,
+                        SelectedServerVersion.Number
+                    );
+
+                    // Refresh local data
+                    await LoadAllModelsByOwner("User");
+
+                    MessageBox.Show("Version cloned successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error cloning version: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private async void CloneModel()
+        {
+            if (SelectedServerModel != null)
+            {
+                try
+                {
+                    foreach (var version in SelectedServerModel.VersionNumber)
+                    {
+                        // Create a FileQueryDTO to specify the file to download
+                        var fileQueryDto = new FileQueryDTO
+                        {
+                            Name = SelectedServerModel.Name,
+                            Owner = SelectedServerModel.Owner,
+                            Type = SelectedServerModel.FileType,
+                            Project = SelectedServerModel.Project,
+                            Version = version.Number
+                        };
+
+                        // Download the version from the server
+                        var (modelStream, fileInfo) = await _fileApiClient.DownloadFileWithMetadataAsync(fileQueryDto);
+
+                        // Ensure the stream is at the beginning
+                        modelStream.Position = 0;
+
+                        // Upload the version to the local database
+                        await _fileService.UploadFileAsync(
+                            SelectedServerModel.Name,
+                            "User",
+                            SelectedServerModel.FileType,
+                            SelectedServerModel.Project,
+                            modelStream,
+                            version.Description,
+                            version.Number
+                        );
+                    }
+
+                    // Refresh local data
+                    await LoadAllModelsByOwner("User");
+
+                    MessageBox.Show("Model cloned successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error cloning model: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private async void CloneProject()
+        {
+            if (SelectedServerProject != null)
+            {
+                try
+                {
+                    foreach (var model in SelectedServerProject.Models)
+                    {
+                        foreach (var version in model.VersionNumber)
+                        {
+                            // Create a FileQueryDTO to specify the file to download
+                            var fileQueryDto = new FileQueryDTO
+                            {
+                                Name = model.Name,
+                                Owner = model.Owner,
+                                Type = model.FileType,
+                                Project = model.Project,
+                                Version = version.Number
+                            };
+
+                            // Download the version from the server
+                            var (modelStream, fileInfo) = await _fileApiClient.DownloadFileWithMetadataAsync(fileQueryDto);
+
+                            // Ensure the stream is at the beginning
+                            modelStream.Position = 0;
+
+                            // Upload the version to the local database
+                            await _fileService.UploadFileAsync(
+                                model.Name,
+                                "User",
+                                model.FileType,
+                                model.Project,
+                                modelStream,
+                                version.Description,
+                                version.Number
+                            );
+                        }
+                    }
+
+                    // Refresh local data
+                    await LoadAllModelsByOwner("User");
+
+                    MessageBox.Show("Project cloned successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error cloning project: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+
+
     }
 }
