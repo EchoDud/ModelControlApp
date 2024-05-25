@@ -11,13 +11,13 @@ namespace ModelControlApp.Repositories
 {
     public interface IFileRepository
     {
-        Task DeleteAsync(BsonDocument query);
-        Task DeleteMultipleAsync(BsonDocument query);
+        Task DeleteManyAsync(BsonDocument query);
+        Task DeleteOneAsync(BsonDocument query);
         Task<Stream> DownloadAsync(BsonDocument query);
-        Task<GridFSFileInfo> GetAsync(BsonDocument query);
-        Task<List<GridFSFileInfo>> GetMultipleAsync(BsonDocument query);
-        Task UpdateAsync(BsonDocument query, BsonDocument updatedMetadata);
-        Task UpdateMultipleAsync(BsonDocument query, BsonDocument updatedMetadata);
+        Task<List<GridFSFileInfo>> GetManyAsync(BsonDocument query);
+        Task<GridFSFileInfo> GetOneAsync(BsonDocument query);
+        Task UpdateManyAsync(BsonDocument query, BsonDocument updatedMetadata);
+        Task UpdateOneAsync(BsonDocument query, BsonDocument updatedMetadata);
         Task<ObjectId> UploadAsync(string fileName, Stream stream, BsonDocument metadata);
     }
 }

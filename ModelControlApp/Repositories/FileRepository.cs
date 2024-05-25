@@ -25,6 +25,13 @@ namespace ModelControlApp.Repositories
 
         public async Task<ObjectId> UploadAsync(string fileName, Stream stream, BsonDocument metadata)
         {
+            if (stream == null || stream.Length == 0)
+            {
+                throw new ArgumentException("Stream is empty");
+            }
+
+            stream.Position = 0;
+
             try
             {
                 var options = new GridFSUploadOptions { Metadata = metadata };
@@ -53,7 +60,6 @@ namespace ModelControlApp.Repositories
                 var stream = new MemoryStream();
 
                 await _gridFSBucket.DownloadToStreamAsync(fileInfo.Id, stream);
-
                 stream.Position = 0;
 
                 return stream;
@@ -64,7 +70,7 @@ namespace ModelControlApp.Repositories
             }
         }
 
-        public async Task<GridFSFileInfo> GetAsync(BsonDocument query)
+        public async Task<GridFSFileInfo> GetOneAsync(BsonDocument query)
         {
             try
             {
@@ -78,7 +84,7 @@ namespace ModelControlApp.Repositories
             }
         }
 
-        public async Task<List<GridFSFileInfo>> GetMultipleAsync(BsonDocument query)
+        public async Task<List<GridFSFileInfo>> GetManyAsync(BsonDocument query)
         {
             try
             {
@@ -92,7 +98,7 @@ namespace ModelControlApp.Repositories
             }
         }
 
-        public async Task UpdateAsync(BsonDocument query, BsonDocument updatedMetadata)
+        public async Task UpdateOneAsync(BsonDocument query, BsonDocument updatedMetadata)
         {
             try
             {
@@ -101,16 +107,32 @@ namespace ModelControlApp.Repositories
 
                 if (fileInfo != null)
                 {
-                    var existingMetadata = fileInfo["metadata"].AsBsonDocument;
-                    var combinedMetadata = new BsonDocument(existingMetadata);
+                    var updateDefinitions = new List<UpdateDefinition<BsonDocument>>();
 
-                    foreach (var element in updatedMetadata)
+                    if (updatedMetadata.Contains("filename"))
                     {
-                        combinedMetadata[element.Name] = element.Value;
+                        updateDefinitions.Add(Builders<BsonDocument>.Update.Set("filename", updatedMetadata["filename"]));
+                        updatedMetadata.Remove("filename");
                     }
 
-                    var update = Builders<BsonDocument>.Update.Set("metadata", combinedMetadata);
-                    await filesCollection.UpdateOneAsync(query, update);
+                    if (updatedMetadata.ElementCount > 0)
+                    {
+                        var existingMetadata = fileInfo["metadata"].AsBsonDocument;
+                        var combinedMetadata = new BsonDocument(existingMetadata);
+
+                        foreach (var element in updatedMetadata)
+                        {
+                            combinedMetadata[element.Name] = element.Value;
+                        }
+
+                        updateDefinitions.Add(Builders<BsonDocument>.Update.Set("metadata", combinedMetadata));
+                    }
+
+                    if (updateDefinitions.Count > 0)
+                    {
+                        var update = Builders<BsonDocument>.Update.Combine(updateDefinitions);
+                        await filesCollection.UpdateOneAsync(query, update);
+                    }
                 }
             }
             catch (Exception ex)
@@ -119,7 +141,7 @@ namespace ModelControlApp.Repositories
             }
         }
 
-        public async Task UpdateMultipleAsync(BsonDocument query, BsonDocument updatedMetadata)
+        public async Task UpdateManyAsync(BsonDocument query, BsonDocument updatedMetadata)
         {
             try
             {
@@ -128,16 +150,32 @@ namespace ModelControlApp.Repositories
 
                 foreach (var fileInfo in await cursor.ToListAsync())
                 {
-                    var existingMetadata = fileInfo["metadata"].AsBsonDocument;
-                    var combinedMetadata = new BsonDocument(existingMetadata);
+                    var updateDefinitions = new List<UpdateDefinition<BsonDocument>>();
 
-                    foreach (var element in updatedMetadata)
+                    if (updatedMetadata.Contains("filename"))
                     {
-                        combinedMetadata[element.Name] = element.Value;
+                        updateDefinitions.Add(Builders<BsonDocument>.Update.Set("filename", updatedMetadata["filename"]));
+                        updatedMetadata.Remove("filename");
                     }
 
-                    var update = Builders<BsonDocument>.Update.Set("metadata", combinedMetadata);
-                    await filesCollection.UpdateOneAsync(Builders<BsonDocument>.Filter.Eq("_id", fileInfo["_id"]), update);
+                    if (updatedMetadata.ElementCount > 0)
+                    {
+                        var existingMetadata = fileInfo["metadata"].AsBsonDocument;
+                        var combinedMetadata = new BsonDocument(existingMetadata);
+
+                        foreach (var element in updatedMetadata)
+                        {
+                            combinedMetadata[element.Name] = element.Value;
+                        }
+
+                        updateDefinitions.Add(Builders<BsonDocument>.Update.Set("metadata", combinedMetadata));
+                    }
+
+                    if (updateDefinitions.Count > 0)
+                    {
+                        var update = Builders<BsonDocument>.Update.Combine(updateDefinitions);
+                        await filesCollection.UpdateOneAsync(Builders<BsonDocument>.Filter.Eq("_id", fileInfo["_id"]), update);
+                    }
                 }
             }
             catch (Exception ex)
@@ -146,7 +184,7 @@ namespace ModelControlApp.Repositories
             }
         }
 
-        public async Task DeleteAsync(BsonDocument query)
+        public async Task DeleteOneAsync(BsonDocument query)
         {
             try
             {
@@ -164,7 +202,7 @@ namespace ModelControlApp.Repositories
             }
         }
 
-        public async Task DeleteMultipleAsync(BsonDocument query)
+        public async Task DeleteManyAsync(BsonDocument query)
         {
             try
             {

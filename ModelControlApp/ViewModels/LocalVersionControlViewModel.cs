@@ -26,7 +26,7 @@ namespace ModelControlApp.ViewModels
 {
     public class LocalVersionControlViewModel : BindableBase
     {
-        private readonly FileService _fileService;
+        private readonly IFileService _fileService;
         private readonly FileApiClient _fileApiClient;
         private Project _selectedProject;
         private Model _selectedModel;
@@ -40,7 +40,7 @@ namespace ModelControlApp.ViewModels
         private bool _isLoggedIn = false;
         private string _authToken;
 
-        public LocalVersionControlViewModel(FileService fileService, FileApiClient fileApiClient)
+        public LocalVersionControlViewModel(IFileService fileService, FileApiClient fileApiClient)
         {
             _fileService = fileService;
             _fileApiClient = fileApiClient;
@@ -237,13 +237,7 @@ namespace ModelControlApp.ViewModels
             try
             {
                 // Download the selected version locally
-                var modelStream = await _fileService.DownloadFileAsync(new FileQueryDTO
-                {
-                    Name = SelectedModel.Name,
-                    Owner = SelectedModel.Owner,
-                    Project = SelectedModel.Project,
-                    Version = SelectedVersion.Number
-                });
+                var (modelStream, fileInfo) = await _fileService.DownloadFileWithMetadataAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project, SelectedVersion.Number);
 
                 // Upload the model to the server
                 var uploadResult = await _fileApiClient.UploadOwnerVersionAsync(new FileUploadDTO
@@ -272,13 +266,7 @@ namespace ModelControlApp.ViewModels
                 foreach (var version in SelectedModel.VersionNumber)
                 {
                     // Download each version locally
-                    var modelStream = await _fileService.DownloadFileAsync(new FileQueryDTO
-                    {
-                        Name = SelectedModel.Name,
-                        Owner = SelectedModel.Owner,
-                        Project = SelectedModel.Project,
-                        Version = version.Number
-                    });
+                    var (modelStream, fileInfo) = await _fileService.DownloadFileWithMetadataAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project, version.Number);
 
                     // Upload each version to the server
                     await _fileApiClient.UploadOwnerVersionAsync(new FileUploadDTO
@@ -310,13 +298,7 @@ namespace ModelControlApp.ViewModels
                     foreach (var version in model.VersionNumber)
                     {
                         // Download each version locally
-                        var modelStream = await _fileService.DownloadFileAsync(new FileQueryDTO
-                        {
-                            Name = model.Name,
-                            Owner = model.Owner,
-                            Project = model.Project,
-                            Version = version.Number
-                        });
+                        var (modelStream, fileInfo) = await _fileService.DownloadFileWithMetadataAsync(model.Name, model.Owner, model.FileType, model.Project, version.Number);
 
                         // Upload each version to the server
                         await _fileApiClient.UploadOwnerVersionAsync(new FileUploadDTO
@@ -463,13 +445,7 @@ namespace ModelControlApp.ViewModels
             {
                 try
                 {
-                    var modelStream = await _fileService.DownloadFileAsync(new FileQueryDTO
-                    {
-                        Name = SelectedModel.Name,
-                        Owner = SelectedModel.Owner,
-                        Project = SelectedModel.Project,
-                        Version = SelectedVersion.Number
-                    });
+                    var (modelStream, fileInfo) = await _fileService.DownloadFileWithMetadataAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project, SelectedVersion.Number);
                     var fileExtension = SelectedModel.FileType;
                     CurrentModel3D = LoadModelFromStream(modelStream, fileExtension);
                 }
@@ -501,7 +477,7 @@ namespace ModelControlApp.ViewModels
         {
             try
             {
-                var fileInfos = await _fileService.GetAllOwnerFilesInfoAsync(owner);
+                var fileInfos = await _fileService.GetAllFilesInfoAsync(owner);
                 Projects.Clear();
 
                 foreach (var fileInfo in fileInfos)
@@ -559,7 +535,6 @@ namespace ModelControlApp.ViewModels
             }
 
             Projects.Add(new Project { Name = projectName });
-            LoadServerProjects();
         }
 
         private async void DeleteProject()
@@ -568,18 +543,12 @@ namespace ModelControlApp.ViewModels
             {
                 foreach (var model in SelectedProject.Models.ToList())
                 {
-                    var deleteFileDTO = new FileQueryDTO
-                    {
-                        Name = model.Name,
-                        Owner = model.Owner,
-                        Project = model.Project
-                    };
-                    await _fileService.DeleteFileAsync(deleteFileDTO);
+                    await _fileService.DeleteFileAsync(model.Name, model.Owner, model.FileType, model.Project);
                 }
 
                 Projects.Remove(SelectedProject);
                 CurrentModel3D = null;
-                LoadServerProjects();
+                LoadAllModelsByOwner("User");
             }
         }
 
@@ -615,7 +584,7 @@ namespace ModelControlApp.ViewModels
                         Description = "Added via application",
                         File = new FormFile(stream, 0, stream.Length, modelName, openFileDialog.FileName)
                     };
-                    await _fileService.UploadFileAsync(uploadFileDTO);
+                    await _fileService.UploadFileAsync(uploadFileDTO.Name, uploadFileDTO.Owner, uploadFileDTO.Type, uploadFileDTO.Project, uploadFileDTO.File.OpenReadStream(), uploadFileDTO.Description);
                     SelectedProject.Models.Add(new Model
                     {
                         Name = modelName,
@@ -624,7 +593,7 @@ namespace ModelControlApp.ViewModels
                         Project = SelectedProject.Name,
                         VersionNumber = new ObservableCollection<ModelVersion> { new ModelVersion { Number = 1, Description = "Initial version" } }
                     });
-                    LoadServerProjects();
+                    LoadAllModelsByOwner("User");
                 }
             }
         }
@@ -633,16 +602,10 @@ namespace ModelControlApp.ViewModels
         {
             if (SelectedModel != null)
             {
-                var deleteFileDTO = new FileQueryDTO
-                {
-                    Name = SelectedModel.Name,
-                    Owner = SelectedModel.Owner,
-                    Project = SelectedModel.Project
-                };
-                await _fileService.DeleteFileAsync(deleteFileDTO);
+                await _fileService.DeleteFileAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project);
                 SelectedProject.Models.Remove(SelectedModel);
                 CurrentModel3D = null;
-                LoadServerProjects();
+                LoadAllModelsByOwner("User");
             }
         }
 
@@ -650,22 +613,15 @@ namespace ModelControlApp.ViewModels
         {
             if (SelectedModel != null && SelectedVersion != null)
             {
-                var deleteFileDTO = new FileQueryDTO
-                {
-                    Name = SelectedModel.Name,
-                    Owner = SelectedModel.Owner,
-                    Project = SelectedModel.Project,
-                    Version = SelectedVersion.Number
-                };
-                await _fileService.DeleteFileByVersionAsync(deleteFileDTO);
+                await _fileService.DeleteFileByVersionAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project, SelectedVersion.Number);
                 SelectedModel.VersionNumber.Remove(SelectedVersion);
 
                 if (!SelectedModel.VersionNumber.Any())
                 {
-                    RemoveModel();
+                    SelectedProject.Models.Remove(SelectedModel);
                 }
                 SelectedVersion = null;
-                LoadServerProjects();
+                LoadAllModelsByOwner("User");
             }
         }
 
@@ -676,25 +632,15 @@ namespace ModelControlApp.ViewModels
             {
                 using (var stream = File.OpenRead(openFileDialog.FileName))
                 {
-                    string userDescription = Microsoft.VisualBasic.Interaction.InputBox("Enter description for the new version:", "Update Model", "Updated version");
+                    string userDescription = Microsoft.VisualBasic.Interaction.InputBox("Enter description for the new version:", "Update Model Version", "New version");
 
-                    var uploadFileDTO = new FileUploadDTO
-                    {
-                        Name = SelectedModel.Name,
-                        Type = SelectedModel.FileType,
-                        Owner = "User",
-                        Project = SelectedProject.Name,
-                        Description = userDescription,
-                        File = new FormFile(stream, 0, stream.Length, SelectedModel.Name, openFileDialog.FileName),
-                        Version = SelectedModel.VersionNumber.Max(v => v.Number) + 1
-                    };
-                    await _fileApiClient.UploadOwnerVersionAsync(uploadFileDTO);
+                    await _fileService.UploadFileAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project, stream, userDescription, SelectedModel.VersionNumber.Max(v => v.Number) + 1);
                     SelectedModel.VersionNumber.Add(new ModelVersion
                     {
                         Number = SelectedModel.VersionNumber.Max(v => v.Number) + 1,
                         Description = userDescription
                     });
-                    LoadServerProjects();
+                    LoadAllModelsByOwner("User");
                 }
             }
         }
@@ -715,13 +661,7 @@ namespace ModelControlApp.ViewModels
             {
                 try
                 {
-                    var stream = await _fileService.DownloadFileAsync(new FileQueryDTO
-                    {
-                        Name = SelectedModel.Name,
-                        Owner = SelectedModel.Owner,
-                        Project = SelectedModel.Project,
-                        Version = SelectedVersion.Number
-                    });
+                    var (stream, fileInfo) = await _fileService.DownloadFileWithMetadataAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project, SelectedVersion.Number);
 
                     using (var fileStream = File.Create(saveFileDialog.FileName))
                     {
