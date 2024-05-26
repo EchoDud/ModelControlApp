@@ -1,4 +1,5 @@
 ﻿using ModelControlApp.DTOs.AuthDTOs;
+using ModelControlApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,20 @@ namespace ModelControlApp.ApiClients
             _baseUrl = baseUrl.TrimEnd('/');
         }
 
+        public void SetToken(string token)
+        {
+            if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            }
+            else
+            {
+                _httpClient.DefaultRequestHeaders.Remove("Authorization");
+                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            }
+            Console.WriteLine($"Token set: {token}");
+        }
+
         public async Task<string> RegisterAsync(RegisterDTO registerRequest)
         {
             var registerContent = new StringContent(JsonSerializer.Serialize(registerRequest), Encoding.UTF8, "application/json");
@@ -38,7 +53,7 @@ namespace ModelControlApp.ApiClients
             else
             {
                 var error = await registerResponse.Content.ReadAsStringAsync();
-                throw new Exception($"Registration failed. Error: {error}");
+                throw new Exception(error);
             }
         }
 
@@ -55,9 +70,26 @@ namespace ModelControlApp.ApiClients
             else
             {
                 var error = await loginResponse.Content.ReadAsStringAsync();
-                throw new Exception($"Login failed. Error: {error}");
+                throw new Exception(error);
             }
         }
 
+        public async Task<IEnumerable<Project>> GetAllProjectsAsync()
+        {
+            var response = await _httpClient.GetAsync($"{_baseUrl}/api/Projects");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var projects = JsonSerializer.Deserialize<IEnumerable<Project>>(jsonResponse);
+                return projects;
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Failed to load projects. Error: {error}");
+            }
+        }
     }
+
 }

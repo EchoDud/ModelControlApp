@@ -168,16 +168,8 @@ namespace ModelControlApp.ViewModels
         public bool IsLoggedIn
         {
             get => _isLoggedIn;
-            set
-            {
-                if (SetProperty(ref _isLoggedIn, value))
-                {
-                    if (value)
-                    {
-                        /*LoadServerProjects();*/
-                    }
-                }
-            }
+            set { SetProperty(ref _isLoggedIn, value); }
+            
         }
 
         public string AuthToken
@@ -230,11 +222,30 @@ namespace ModelControlApp.ViewModels
         {
             try
             {
+                var previousSelectedServerProject = SelectedServerProject;
+                var previousSelectedServerModel = SelectedServerModel;
+                var previousSelectedServerVersion = SelectedServerVersion;
+
                 var projects = await _fileApiClient.GetAllProjectsAsync();
                 ServerProjects.Clear();
                 foreach (var project in projects)
                 {
                     ServerProjects.Add(project);
+                }
+
+                if (previousSelectedServerProject != null)
+                {
+                    SelectedServerProject = ServerProjects.FirstOrDefault(p => p.Name == previousSelectedServerProject.Name);
+                }
+
+                if (previousSelectedServerModel != null && SelectedServerProject != null)
+                {
+                    SelectedServerModel = SelectedServerProject.Models.FirstOrDefault(m => m.Name == previousSelectedServerModel.Name);
+                }
+
+                if (previousSelectedServerVersion != null && SelectedServerModel != null)
+                {
+                    SelectedServerVersion = SelectedServerModel.VersionNumber.FirstOrDefault(v => v.Number == previousSelectedServerVersion.Number);
                 }
             }
             catch (Exception ex)
@@ -258,16 +269,14 @@ namespace ModelControlApp.ViewModels
         {
             try
             {
-                // Download the selected version locally
                 var (modelStream, fileInfo) = await _fileService.DownloadFileWithMetadataAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project, SelectedVersion.Number);
 
-                // Upload the model to the server
                 var uploadResult = await _fileApiClient.UploadOwnerVersionAsync(new FileUploadDTO
                 {
                     Name = SelectedModel.Name,
                     Project = SelectedModel.Project,
                     Type = SelectedModel.FileType,
-                    Description = SelectedVersion.Description ?? "No description provided", // Provide a default description if null
+                    Description = SelectedVersion.Description ?? "No description provided",
                     File = new FormFile(modelStream, 0, modelStream.Length, SelectedModel.Name, $"{SelectedModel.Name}.{SelectedModel.FileType}"),
                     Version = SelectedVersion.Number
                 });
@@ -287,16 +296,14 @@ namespace ModelControlApp.ViewModels
             {
                 foreach (var version in SelectedModel.VersionNumber)
                 {
-                    // Download each version locally
                     var (modelStream, fileInfo) = await _fileService.DownloadFileWithMetadataAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project, version.Number);
 
-                    // Upload each version to the server
                     await _fileApiClient.UploadOwnerVersionAsync(new FileUploadDTO
                     {
                         Name = SelectedModel.Name,
                         Project = SelectedModel.Project,
                         Type = SelectedModel.FileType,
-                        Description = version.Description ?? "No description provided", // Provide a default description if null
+                        Description = version.Description ?? "No description provided",
                         File = new FormFile(modelStream, 0, modelStream.Length, SelectedModel.Name, $"{SelectedModel.Name}.{SelectedModel.FileType}"),
                         Version = version.Number
                     });
@@ -319,16 +326,14 @@ namespace ModelControlApp.ViewModels
                 {
                     foreach (var version in model.VersionNumber)
                     {
-                        // Download each version locally
                         var (modelStream, fileInfo) = await _fileService.DownloadFileWithMetadataAsync(model.Name, model.Owner, model.FileType, model.Project, version.Number);
 
-                        // Upload each version to the server
                         await _fileApiClient.UploadOwnerVersionAsync(new FileUploadDTO
                         {
                             Name = model.Name,
                             Project = model.Project,
                             Type = model.FileType,
-                            Description = version.Description ?? "No description provided", // Provide a default description if null
+                            Description = version.Description ?? "No description provided",
                             File = new FormFile(modelStream, 0, modelStream.Length, model.Name, $"{model.Name}.{model.FileType}"),
                             Version = version.Number
                         });
@@ -499,6 +504,10 @@ namespace ModelControlApp.ViewModels
         {
             try
             {
+                var previousSelectedProject = SelectedProject;
+                var previousSelectedModel = SelectedModel;
+                var previousSelectedVersion = SelectedVersion;
+
                 var fileInfos = await _fileService.GetAllFilesInfoAsync(owner);
                 Projects.Clear();
 
@@ -528,11 +537,28 @@ namespace ModelControlApp.ViewModels
                         project.Models.Add(model);
                     }
 
-                    model.VersionNumber.Add(new ModelVersion
+                    var version = new ModelVersion
                     {
                         Number = Convert.ToInt32(fileInfo.Metadata["version_number"].AsInt64),
                         Description = fileInfo.Metadata.GetValue("version_description", new BsonString("No description")).AsString
-                    });
+                    };
+                    model.VersionNumber.Add(version);
+                    model.VersionNumber = new ObservableCollection<ModelVersion>(model.VersionNumber.OrderBy(v => v.Number));
+                }
+
+                if (previousSelectedProject != null)
+                {
+                    SelectedProject = Projects.FirstOrDefault(p => p.Name == previousSelectedProject.Name);
+                }
+
+                if (previousSelectedModel != null && SelectedProject != null)
+                {
+                    SelectedModel = SelectedProject.Models.FirstOrDefault(m => m.Name == previousSelectedModel.Name);
+                }
+
+                if (previousSelectedVersion != null && SelectedModel != null)
+                {
+                    SelectedVersion = SelectedModel.VersionNumber.FirstOrDefault(v => v.Number == previousSelectedVersion.Number);
                 }
             }
             catch (Exception ex)
@@ -540,6 +566,7 @@ namespace ModelControlApp.ViewModels
                 MessageBox.Show($"Failed to load models: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         private void CreateProject()
         {
@@ -704,7 +731,6 @@ namespace ModelControlApp.ViewModels
             {
                 try
                 {
-                    // Create a FileQueryDTO to specify the file to download
                     var fileQueryDto = new FileQueryDTO
                     {
                         Name = SelectedServerModel.Name,
@@ -714,13 +740,10 @@ namespace ModelControlApp.ViewModels
                         Version = SelectedServerVersion.Number
                     };
 
-                    // Download the version from the server
                     var (modelStream, fileInfo) = await _fileApiClient.DownloadFileWithMetadataAsync(fileQueryDto);
 
-                    // Ensure the stream is at the beginning
                     modelStream.Position = 0;
 
-                    // Upload the version to the local database
                     await _fileService.UploadFileAsync(
                         SelectedServerModel.Name,
                         "User",
@@ -731,7 +754,6 @@ namespace ModelControlApp.ViewModels
                         SelectedServerVersion.Number
                     );
 
-                    // Refresh local data
                     await LoadAllModelsByOwner("User");
 
                     MessageBox.Show("Version cloned successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -751,7 +773,6 @@ namespace ModelControlApp.ViewModels
                 {
                     foreach (var version in SelectedServerModel.VersionNumber)
                     {
-                        // Create a FileQueryDTO to specify the file to download
                         var fileQueryDto = new FileQueryDTO
                         {
                             Name = SelectedServerModel.Name,
@@ -761,13 +782,10 @@ namespace ModelControlApp.ViewModels
                             Version = version.Number
                         };
 
-                        // Download the version from the server
                         var (modelStream, fileInfo) = await _fileApiClient.DownloadFileWithMetadataAsync(fileQueryDto);
 
-                        // Ensure the stream is at the beginning
                         modelStream.Position = 0;
 
-                        // Upload the version to the local database
                         await _fileService.UploadFileAsync(
                             SelectedServerModel.Name,
                             "User",
@@ -779,7 +797,6 @@ namespace ModelControlApp.ViewModels
                         );
                     }
 
-                    // Refresh local data
                     await LoadAllModelsByOwner("User");
 
                     MessageBox.Show("Model cloned successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -801,7 +818,6 @@ namespace ModelControlApp.ViewModels
                     {
                         foreach (var version in model.VersionNumber)
                         {
-                            // Create a FileQueryDTO to specify the file to download
                             var fileQueryDto = new FileQueryDTO
                             {
                                 Name = model.Name,
@@ -811,13 +827,10 @@ namespace ModelControlApp.ViewModels
                                 Version = version.Number
                             };
 
-                            // Download the version from the server
                             var (modelStream, fileInfo) = await _fileApiClient.DownloadFileWithMetadataAsync(fileQueryDto);
 
-                            // Ensure the stream is at the beginning
                             modelStream.Position = 0;
 
-                            // Upload the version to the local database
                             await _fileService.UploadFileAsync(
                                 model.Name,
                                 "User",
@@ -830,7 +843,6 @@ namespace ModelControlApp.ViewModels
                         }
                     }
 
-                    // Refresh local data
                     await LoadAllModelsByOwner("User");
 
                     MessageBox.Show("Project cloned successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);

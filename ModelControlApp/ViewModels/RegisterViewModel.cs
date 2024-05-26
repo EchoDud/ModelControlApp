@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows;
 using ModelControlApp.ApiClients;
 using ModelControlApp.DTOs.AuthDTOs;
+using ModelControlApp.Infrastructure;
 
 namespace ModelControlApp.ViewModels
 {
@@ -59,13 +60,16 @@ namespace ModelControlApp.ViewModels
                     Password = Password
                 };
 
-                var token = await _authApiClient.RegisterAsync(registerDto);
+                var jsonResponse = await _authApiClient.RegisterAsync(registerDto);
+                var token = JsonPreprocessor.ExtractToken(jsonResponse);
+
                 MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 RequestClose?.Invoke(token);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Registration failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                string errorMessage = JsonPreprocessor.ExtractErrorMessage(ex.Message);
+                MessageBox.Show($"Registration failed: {errorMessage}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

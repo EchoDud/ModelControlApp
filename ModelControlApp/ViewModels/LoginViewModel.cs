@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using ModelControlApp.ApiClients;
 using ModelControlApp.DTOs.AuthDTOs;
 using System.Text.Json;
+using ModelControlApp.Infrastructure;
 
 namespace ModelControlApp.ViewModels
 {
@@ -54,21 +55,16 @@ namespace ModelControlApp.ViewModels
                 };
 
                 var jsonResponse = await _authApiClient.LoginAsync(loginDto);
-                var token = ExtractTokenFromJson(jsonResponse);
+                var token = JsonPreprocessor.ExtractToken(jsonResponse);
 
                 MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 RequestClose?.Invoke(token);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Login failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                string errorMessage = JsonPreprocessor.ExtractErrorMessage(ex.Message);
+                MessageBox.Show($"Login failed: {errorMessage}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private string ExtractTokenFromJson(string jsonResponse)
-        {
-            var jsonDocument = JsonDocument.Parse(jsonResponse);
-            return jsonDocument.RootElement.GetProperty("token").GetString();
         }
     }
 }

@@ -59,8 +59,6 @@ namespace ModelControlApp.ApiClients
             }
         }
 
-        // Other existing methods...
-
         public async Task<string> UploadOwnerVersionAsync(FileUploadDTO uploadRequest)
         {
             using var content = new MultipartFormDataContent();
@@ -102,10 +100,8 @@ namespace ModelControlApp.ApiClients
                 throw new Exception("The JSON response from the server is empty.");
             }
 
-            // Preprocess the JSON response
             jsonResponse = JsonPreprocessor.PreprocessJson(jsonResponse);
 
-            // Log the preprocessed JSON response for debugging
             Console.WriteLine("Preprocessed JSON Response: " + jsonResponse);
 
             ApiResponseDTO apiResponse;
@@ -136,10 +132,8 @@ namespace ModelControlApp.ApiClients
 
                 try
                 {
-                    // Preprocess each individual value before deserialization
                     var preprocessedValue = JsonPreprocessor.PreprocessJson(value);
 
-                    // Log the preprocessed individual value for debugging
                     Console.WriteLine("Preprocessed Individual Value: " + preprocessedValue);
 
                     var fileInfo = JsonSerializer.Deserialize<DTOs.JsonDTOs.FileInfoDTO>(preprocessedValue, new JsonSerializerOptions
@@ -154,7 +148,6 @@ namespace ModelControlApp.ApiClients
                 }
                 catch (Exception ex)
                 {
-                    // Log the specific value that caused the issue
                     throw new Exception($"Error deserializing individual file info: {ex.Message}. Value: {value}");
                 }
             }
@@ -190,7 +183,6 @@ namespace ModelControlApp.ApiClients
                     Description = fileInfo.Metadata.Version_Description
                 };
 
-                // Insert the version into the collection in sorted order
                 var index = model.VersionNumber.Select(v => v.Number).ToList().BinarySearch(version.Number);
                 if (index < 0) index = ~index;
                 model.VersionNumber.Insert(index, version);
