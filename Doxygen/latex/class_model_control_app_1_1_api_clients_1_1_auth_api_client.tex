@@ -1,0 +1,150 @@
+\doxysection{Model\+Control\+App.\+Api\+Clients.\+Auth\+Api\+Client Class Reference}
+\hypertarget{class_model_control_app_1_1_api_clients_1_1_auth_api_client}{}\label{class_model_control_app_1_1_api_clients_1_1_auth_api_client}\index{ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}}
+
+
+A client for handling authentication-\/related API calls.  
+
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_model_control_app_1_1_api_clients_1_1_auth_api_client_af90c61a481050e7eede6b7d1f254cc9d}{Auth\+Api\+Client}} (string base\+Url)
+\begin{DoxyCompactList}\small\item\em Initializes a new instance of the Auth\+Api\+Client class. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a1dfbc1cbd5072a5977515f99fbc27d51}{Set\+Token}} (string token)
+\begin{DoxyCompactList}\small\item\em Sets the authorization token for the HTTP client. \end{DoxyCompactList}\item 
+async Task$<$ string $>$ \mbox{\hyperlink{class_model_control_app_1_1_api_clients_1_1_auth_api_client_abb2ac438186728909911d0573501e9e5}{Register\+Async}} (\mbox{\hyperlink{class_model_control_app_1_1_d_t_os_1_1_auth_d_t_os_1_1_register_d_t_o}{Register\+DTO}} register\+Request)
+\begin{DoxyCompactList}\small\item\em Registers a new user. \end{DoxyCompactList}\item 
+async Task$<$ string $>$ \mbox{\hyperlink{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a0c0832ba688845a88a042b6a94ca35ed}{Login\+Async}} (\mbox{\hyperlink{class_model_control_app_1_1_d_t_os_1_1_auth_d_t_os_1_1_login_d_t_o}{Login\+DTO}} login\+Request)
+\begin{DoxyCompactList}\small\item\em Logs in an existing user. \end{DoxyCompactList}\item 
+async Task$<$ IEnumerable$<$ \mbox{\hyperlink{class_model_control_app_1_1_models_1_1_project}{Project}} $>$ $>$ \mbox{\hyperlink{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a52a2bbdf7b6dfdfcb98ec340f85d162b}{Get\+All\+Projects\+Async}} ()
+\begin{DoxyCompactList}\small\item\em Retrieves all projects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+readonly Http\+Client \mbox{\hyperlink{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a4d6adfea548670845fafe203614406a5}{\+\_\+http\+Client}}
+\item 
+readonly string \mbox{\hyperlink{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a0dc6a4592d2fbbfbad73f438b0ca7a3a}{\+\_\+base\+Url}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A client for handling authentication-\/related API calls. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_model_control_app_1_1_api_clients_1_1_auth_api_client_af90c61a481050e7eede6b7d1f254cc9d}\label{class_model_control_app_1_1_api_clients_1_1_auth_api_client_af90c61a481050e7eede6b7d1f254cc9d} 
+\index{ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}!AuthApiClient@{AuthApiClient}}
+\index{AuthApiClient@{AuthApiClient}!ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}}
+\doxysubsubsection{\texorpdfstring{AuthApiClient()}{AuthApiClient()}}
+{\footnotesize\ttfamily Model\+Control\+App.\+Api\+Clients.\+Auth\+Api\+Client.\+Auth\+Api\+Client (\begin{DoxyParamCaption}\item[{string}]{base\+Url }\end{DoxyParamCaption})}
+
+
+
+Initializes a new instance of the Auth\+Api\+Client class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em base\+Url} & The base URL of the API. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a52a2bbdf7b6dfdfcb98ec340f85d162b}\label{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a52a2bbdf7b6dfdfcb98ec340f85d162b} 
+\index{ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}!GetAllProjectsAsync@{GetAllProjectsAsync}}
+\index{GetAllProjectsAsync@{GetAllProjectsAsync}!ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}}
+\doxysubsubsection{\texorpdfstring{GetAllProjectsAsync()}{GetAllProjectsAsync()}}
+{\footnotesize\ttfamily async Task$<$ IEnumerable$<$ \mbox{\hyperlink{class_model_control_app_1_1_models_1_1_project}{Project}} $>$ $>$ Model\+Control\+App.\+Api\+Clients.\+Auth\+Api\+Client.\+Get\+All\+Projects\+Async (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Retrieves all projects. 
+
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains a collection of projects. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & Thrown when the retrieval of projects fails. \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a0c0832ba688845a88a042b6a94ca35ed}\label{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a0c0832ba688845a88a042b6a94ca35ed} 
+\index{ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}!LoginAsync@{LoginAsync}}
+\index{LoginAsync@{LoginAsync}!ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}}
+\doxysubsubsection{\texorpdfstring{LoginAsync()}{LoginAsync()}}
+{\footnotesize\ttfamily async Task$<$ string $>$ Model\+Control\+App.\+Api\+Clients.\+Auth\+Api\+Client.\+Login\+Async (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_model_control_app_1_1_d_t_os_1_1_auth_d_t_os_1_1_login_d_t_o}{Login\+DTO}}}]{login\+Request }\end{DoxyParamCaption})}
+
+
+
+Logs in an existing user. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em login\+Request} & The login details. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains the response string. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & Thrown when the login fails. \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{class_model_control_app_1_1_api_clients_1_1_auth_api_client_abb2ac438186728909911d0573501e9e5}\label{class_model_control_app_1_1_api_clients_1_1_auth_api_client_abb2ac438186728909911d0573501e9e5} 
+\index{ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}!RegisterAsync@{RegisterAsync}}
+\index{RegisterAsync@{RegisterAsync}!ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}}
+\doxysubsubsection{\texorpdfstring{RegisterAsync()}{RegisterAsync()}}
+{\footnotesize\ttfamily async Task$<$ string $>$ Model\+Control\+App.\+Api\+Clients.\+Auth\+Api\+Client.\+Register\+Async (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_model_control_app_1_1_d_t_os_1_1_auth_d_t_os_1_1_register_d_t_o}{Register\+DTO}}}]{register\+Request }\end{DoxyParamCaption})}
+
+
+
+Registers a new user. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em register\+Request} & The registration details. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains the response string. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & Thrown when the registration fails. \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a1dfbc1cbd5072a5977515f99fbc27d51}\label{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a1dfbc1cbd5072a5977515f99fbc27d51} 
+\index{ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}!SetToken@{SetToken}}
+\index{SetToken@{SetToken}!ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}}
+\doxysubsubsection{\texorpdfstring{SetToken()}{SetToken()}}
+{\footnotesize\ttfamily void Model\+Control\+App.\+Api\+Clients.\+Auth\+Api\+Client.\+Set\+Token (\begin{DoxyParamCaption}\item[{string}]{token }\end{DoxyParamCaption})}
+
+
+
+Sets the authorization token for the HTTP client. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em token} & The authorization token. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a0dc6a4592d2fbbfbad73f438b0ca7a3a}\label{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a0dc6a4592d2fbbfbad73f438b0ca7a3a} 
+\index{ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}!\_baseUrl@{\_baseUrl}}
+\index{\_baseUrl@{\_baseUrl}!ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}}
+\doxysubsubsection{\texorpdfstring{\_baseUrl}{\_baseUrl}}
+{\footnotesize\ttfamily readonly string Model\+Control\+App.\+Api\+Clients.\+Auth\+Api\+Client.\+\_\+base\+Url\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a4d6adfea548670845fafe203614406a5}\label{class_model_control_app_1_1_api_clients_1_1_auth_api_client_a4d6adfea548670845fafe203614406a5} 
+\index{ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}!\_httpClient@{\_httpClient}}
+\index{\_httpClient@{\_httpClient}!ModelControlApp.ApiClients.AuthApiClient@{ModelControlApp.ApiClients.AuthApiClient}}
+\doxysubsubsection{\texorpdfstring{\_httpClient}{\_httpClient}}
+{\footnotesize\ttfamily readonly Http\+Client Model\+Control\+App.\+Api\+Clients.\+Auth\+Api\+Client.\+\_\+http\+Client\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Model\+Control\+App/\+Api\+Clients/\mbox{\hyperlink{_auth_api_client_8cs}{Auth\+Api\+Client.\+cs}}\end{DoxyCompactItemize}

@@ -6,14 +6,35 @@ using System.Threading.Tasks;
 
 namespace ModelControlApp.DTOs.JsonDTOs
 {
-    public class FileInfoDTO
+    /**
+     * @class FileMetadata
+     * @brief Data transfer object for file metadata.
+     */
+    public class FileMetadata
     {
-        public string _Id { get; set; }
-        public long Length { get; set; }
-        public long ChunkSize { get; set; }
-        public DateTime UploadDate { get; set; }
-        public string Md5 { get; set; }
-        public string Filename { get; set; }
-        public FileMetadata Metadata { get; set; }
+        /**
+         * @brief Gets or sets the type of the file.
+         */
+        public string File_Type { get; set; }
+
+        /**
+         * @brief Gets or sets the owner of the file.
+         */
+        public string Owner { get; set; }
+
+        /**
+         * @brief Gets or sets the project associated with the file.
+         */
+        public string Project { get; set; }
+
+        /**
+         * @brief Gets or sets the version number of the file.
+         */
+        public int Version_Number { get; set; }
+
+        /**
+         * @brief Gets or sets the version description of the file.
+         */
+        public string Version_Description { get; set; }
     }
 }

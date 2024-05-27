@@ -1,0 +1,167 @@
+\doxysection{Model\+Control\+App.\+View\+Models.\+Login\+View\+Model Class Reference}
+\hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model}{}\label{class_model_control_app_1_1_view_models_1_1_login_view_model}\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+
+
+Login\+View\+Model.  
+
+
+Inheritance diagram for Model\+Control\+App.\+View\+Models.\+Login\+View\+Model\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.287356cm]{class_model_control_app_1_1_view_models_1_1_login_view_model}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_af6995a7a57976a68df882cdc5c83e451}{Initialize\+Component}} ()
+\begin{DoxyCompactList}\small\item\em Initialize\+Component. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_aa5f2de545e8be7ffacf5e241ae220388}{Login\+View\+Model}} (\mbox{\hyperlink{class_model_control_app_1_1_api_clients_1_1_auth_api_client}{Auth\+Api\+Client}} auth\+Api\+Client)
+\begin{DoxyCompactList}\small\item\em Initializes a new instance of the Login\+View\+Model class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+ICommand \mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_af17bff6986fcdbaab6a9a71b500b17b4}{Login\+Command}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+string \mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_a71dd48e4bf3b775a29f1af1481d7ee3d}{Username}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, set\mbox{]}}
+\item 
+string \mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_ab44a3866dad939d7a79004b41613d7ce}{Password}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, set\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+Action$<$ string $>$ \mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_a66a0f1145a1bf308ddd2ed671aca476c}{Request\+Close}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void System.\+Windows.\+Markup.\+IComponent\+Connector. \mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_a79500fc852d75a79b2bf7a9e249cad5e}{Connect}} (int connection\+Id, object target)
+\item 
+async void \mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_a4b64c45c9c18adf132f5ae07e226680d}{Login\+User}} ()
+\begin{DoxyCompactList}\small\item\em Logs in the user. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_a6d6b1abcfe3855c77d7bb1b8325a33cf}{\+\_\+content\+Loaded}}
+\item 
+readonly \mbox{\hyperlink{class_model_control_app_1_1_api_clients_1_1_auth_api_client}{Auth\+Api\+Client}} \mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_a3390f58161aef2a6a76b0a6ab6f6e59e}{\+\_\+auth\+Api\+Client}}
+\item 
+string \mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_a9123cf58d00186d0c5ee475491de99f8}{\+\_\+username}}
+\item 
+string \mbox{\hyperlink{class_model_control_app_1_1_view_models_1_1_login_view_model_a783536bef59965849a223067aed70caf}{\+\_\+password}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Login\+View\+Model. 
+
+View\+Model for user login. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_aa5f2de545e8be7ffacf5e241ae220388}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_aa5f2de545e8be7ffacf5e241ae220388} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!LoginViewModel@{LoginViewModel}}
+\index{LoginViewModel@{LoginViewModel}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{LoginViewModel()}{LoginViewModel()}}
+{\footnotesize\ttfamily Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+Login\+View\+Model (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_model_control_app_1_1_api_clients_1_1_auth_api_client}{Auth\+Api\+Client}}}]{auth\+Api\+Client }\end{DoxyParamCaption})}
+
+
+
+Initializes a new instance of the Login\+View\+Model class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em auth\+Api\+Client} & The authentication API client. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_a79500fc852d75a79b2bf7a9e249cad5e}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_a79500fc852d75a79b2bf7a9e249cad5e} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!Connect@{Connect}}
+\index{Connect@{Connect}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{Connect()}{Connect()}}
+{\footnotesize\ttfamily void System.\+Windows.\+Markup.\+IComponent\+Connector. Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+Connect (\begin{DoxyParamCaption}\item[{int}]{connection\+Id,  }\item[{object}]{target }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_af6995a7a57976a68df882cdc5c83e451}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_af6995a7a57976a68df882cdc5c83e451} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!InitializeComponent@{InitializeComponent}}
+\index{InitializeComponent@{InitializeComponent}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{InitializeComponent()}{InitializeComponent()}}
+{\footnotesize\ttfamily void Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+Initialize\+Component (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initialize\+Component. 
+
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_a4b64c45c9c18adf132f5ae07e226680d}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_a4b64c45c9c18adf132f5ae07e226680d} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!LoginUser@{LoginUser}}
+\index{LoginUser@{LoginUser}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{LoginUser()}{LoginUser()}}
+{\footnotesize\ttfamily async void Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+Login\+User (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Logs in the user. 
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_a3390f58161aef2a6a76b0a6ab6f6e59e}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_a3390f58161aef2a6a76b0a6ab6f6e59e} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!\_authApiClient@{\_authApiClient}}
+\index{\_authApiClient@{\_authApiClient}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{\_authApiClient}{\_authApiClient}}
+{\footnotesize\ttfamily readonly \mbox{\hyperlink{class_model_control_app_1_1_api_clients_1_1_auth_api_client}{Auth\+Api\+Client}} Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+\_\+auth\+Api\+Client\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_a6d6b1abcfe3855c77d7bb1b8325a33cf}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_a6d6b1abcfe3855c77d7bb1b8325a33cf} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!\_contentLoaded@{\_contentLoaded}}
+\index{\_contentLoaded@{\_contentLoaded}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{\_contentLoaded}{\_contentLoaded}}
+{\footnotesize\ttfamily bool Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+\_\+content\+Loaded\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_a783536bef59965849a223067aed70caf}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_a783536bef59965849a223067aed70caf} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!\_password@{\_password}}
+\index{\_password@{\_password}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{\_password}{\_password}}
+{\footnotesize\ttfamily string Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+\_\+password\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_a9123cf58d00186d0c5ee475491de99f8}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_a9123cf58d00186d0c5ee475491de99f8} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!\_username@{\_username}}
+\index{\_username@{\_username}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{\_username}{\_username}}
+{\footnotesize\ttfamily string Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+\_\+username\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_af17bff6986fcdbaab6a9a71b500b17b4}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_af17bff6986fcdbaab6a9a71b500b17b4} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!LoginCommand@{LoginCommand}}
+\index{LoginCommand@{LoginCommand}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{LoginCommand}{LoginCommand}}
+{\footnotesize\ttfamily ICommand Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+Login\+Command\hspace{0.3cm}{\ttfamily [get]}}
+
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_ab44a3866dad939d7a79004b41613d7ce}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_ab44a3866dad939d7a79004b41613d7ce} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!Password@{Password}}
+\index{Password@{Password}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{Password}{Password}}
+{\footnotesize\ttfamily string Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+Password\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [set]}}
+
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_a71dd48e4bf3b775a29f1af1481d7ee3d}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_a71dd48e4bf3b775a29f1af1481d7ee3d} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!Username@{Username}}
+\index{Username@{Username}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{Username}{Username}}
+{\footnotesize\ttfamily string Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+Username\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [set]}}
+
+
+
+\doxysubsection{Event Documentation}
+\Hypertarget{class_model_control_app_1_1_view_models_1_1_login_view_model_a66a0f1145a1bf308ddd2ed671aca476c}\label{class_model_control_app_1_1_view_models_1_1_login_view_model_a66a0f1145a1bf308ddd2ed671aca476c} 
+\index{ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}!RequestClose@{RequestClose}}
+\index{RequestClose@{RequestClose}!ModelControlApp.ViewModels.LoginViewModel@{ModelControlApp.ViewModels.LoginViewModel}}
+\doxysubsubsection{\texorpdfstring{RequestClose}{RequestClose}}
+{\footnotesize\ttfamily Action$<$string$>$ Model\+Control\+App.\+View\+Models.\+Login\+View\+Model.\+Request\+Close}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Model\+Control\+App/obj/\+Debug/net8.\+0-\/windows/\+View\+Models/\mbox{\hyperlink{_login_view_model_8g_8i_8cs}{Login\+View\+Model.\+g.\+i.\+cs}}\item 
+Model\+Control\+App/\+View\+Models/\mbox{\hyperlink{_login_view_model_8cs}{Login\+View\+Model.\+cs}}\end{DoxyCompactItemize}

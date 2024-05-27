@@ -1,0 +1,503 @@
+\doxysection{Model\+Control\+App.\+Services.\+File\+Service Class Reference}
+\hypertarget{class_model_control_app_1_1_services_1_1_file_service}{}\label{class_model_control_app_1_1_services_1_1_file_service}\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+
+
+Service for handling file operations.  
+
+
+Inheritance diagram for Model\+Control\+App.\+Services.\+File\+Service\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_model_control_app_1_1_services_1_1_file_service}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_ac37adc43fdf8e1b45185040fa87277aa}{File\+Service}} (\mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository}{IFile\+Repository}} file\+Repository)
+\begin{DoxyCompactList}\small\item\em Initializes a new instance of the File\+Service class. \end{DoxyCompactList}\item 
+async Task$<$ Object\+Id $>$ \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_afef6fe06cf56da8687dbe3bd45c7dd96}{Upload\+File\+Async}} (string name, string owner, string type, string project, Stream stream, string? description=null, long? version=null)
+\begin{DoxyCompactList}\small\item\em Uploads a file. \end{DoxyCompactList}\item 
+async Task$<$(Stream, Grid\+FSFile\+Info)$>$ \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_a6d106a584d32d3255f0bd572a7a5d6a3}{Download\+File\+With\+Metadata\+Async}} (string name, string owner, string type, string project, long? version=null)
+\begin{DoxyCompactList}\small\item\em Downloads a file with metadata. \end{DoxyCompactList}\item 
+async Task$<$ Grid\+FSFile\+Info $>$ \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_afc72cb9835a5bd28b1ce966826e950db}{Get\+File\+Info\+By\+Version\+Async}} (string name, string owner, string type, string project, long version)
+\begin{DoxyCompactList}\small\item\em Gets file information by version. \end{DoxyCompactList}\item 
+async Task$<$ List$<$ Grid\+FSFile\+Info $>$ $>$ \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_aeab269711070b1dfba55fe61b48c21de}{Get\+File\+Info\+Async}} (string name, string owner, string type, string project)
+\begin{DoxyCompactList}\small\item\em Gets file information. \end{DoxyCompactList}\item 
+async Task$<$ List$<$ Grid\+FSFile\+Info $>$ $>$ \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_a957bef78b70ba77eb79c66d1518f8d92}{Get\+Project\+Files\+Info\+Async}} (string owner, string project)
+\begin{DoxyCompactList}\small\item\em Gets project files information. \end{DoxyCompactList}\item 
+async Task$<$ List$<$ Grid\+FSFile\+Info $>$ $>$ \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_a9b9e60331389b1541c8c4bf4d7b58da9}{Get\+All\+Files\+Info\+Async}} (string owner)
+\begin{DoxyCompactList}\small\item\em Gets all files information for an owner. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_a6e3d2fa58fb5e06e549cf5d45dc4670d}{Update\+File\+Info\+By\+Version\+Async}} (string name, string owner, string type, string project, long version, Bson\+Document updated\+Metadata)
+\begin{DoxyCompactList}\small\item\em Updates file information by version. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_a9eac06d1411cb7197920b8b131450a10}{Update\+File\+Info\+Async}} (string name, string owner, string type, string project, Bson\+Document updated\+Metadata)
+\begin{DoxyCompactList}\small\item\em Updates file information. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_a9f23ea7a30824f7c85b84b0f992df9b8}{Update\+File\+Info\+By\+Project\+Async}} (string owner, string project, Bson\+Document updated\+Metadata)
+\begin{DoxyCompactList}\small\item\em Updates file information by project. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_a7928816c8ca65654148a96d17fa93ce0}{Update\+All\+Files\+Info\+Async}} (string owner, Bson\+Document updated\+Metadata)
+\begin{DoxyCompactList}\small\item\em Updates all file information for an owner. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_ab874b9ef2c0fb892aadd748e650e30f3}{Delete\+File\+By\+Version\+Async}} (string name, string owner, string type, string project, long version)
+\begin{DoxyCompactList}\small\item\em Deletes a file by version. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_a19c7dec63f4c9733e8819b0c0ca86688}{Delete\+File\+Async}} (string name, string owner, string type, string project)
+\begin{DoxyCompactList}\small\item\em Deletes a file. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_af9f670698c35a12399e8c600b6aa7973}{Delete\+Project\+Files\+Async}} (string owner, string project)
+\begin{DoxyCompactList}\small\item\em Deletes project files. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_ac4984b450d31290708b42b1ebc274da3}{Delete\+All\+Files\+Async}} (string owner)
+\begin{DoxyCompactList}\small\item\em Deletes all files for an owner. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+async Task$<$ long $>$ \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_ae29aa658683786a4d1c8a876719031af}{Get\+Last\+Version\+Number\+Async}} (string file\+Name, string owner, string type, string project)
+\begin{DoxyCompactList}\small\item\em Gets the last version number of a file. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+readonly \mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository}{IFile\+Repository}} \mbox{\hyperlink{class_model_control_app_1_1_services_1_1_file_service_ad4826eaefd31aa713cad80fe1d2711f1}{\+\_\+file\+Repository}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Service for handling file operations. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_ac37adc43fdf8e1b45185040fa87277aa}\label{class_model_control_app_1_1_services_1_1_file_service_ac37adc43fdf8e1b45185040fa87277aa} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!FileService@{FileService}}
+\index{FileService@{FileService}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{FileService()}{FileService()}}
+{\footnotesize\ttfamily Model\+Control\+App.\+Services.\+File\+Service.\+File\+Service (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository}{IFile\+Repository}}}]{file\+Repository }\end{DoxyParamCaption})}
+
+
+
+Initializes a new instance of the File\+Service class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+Repository} & The file repository. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_ac4984b450d31290708b42b1ebc274da3}\label{class_model_control_app_1_1_services_1_1_file_service_ac4984b450d31290708b42b1ebc274da3} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!DeleteAllFilesAsync@{DeleteAllFilesAsync}}
+\index{DeleteAllFilesAsync@{DeleteAllFilesAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{DeleteAllFilesAsync()}{DeleteAllFilesAsync()}}
+{\footnotesize\ttfamily async Task Model\+Control\+App.\+Services.\+File\+Service.\+Delete\+All\+Files\+Async (\begin{DoxyParamCaption}\item[{string}]{owner }\end{DoxyParamCaption})}
+
+
+
+Deletes all files for an owner. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em owner} & The owner of the files. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_a0d60a94849269d14fb28abd8d7ee2a57}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_a19c7dec63f4c9733e8819b0c0ca86688}\label{class_model_control_app_1_1_services_1_1_file_service_a19c7dec63f4c9733e8819b0c0ca86688} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!DeleteFileAsync@{DeleteFileAsync}}
+\index{DeleteFileAsync@{DeleteFileAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{DeleteFileAsync()}{DeleteFileAsync()}}
+{\footnotesize\ttfamily async Task Model\+Control\+App.\+Services.\+File\+Service.\+Delete\+File\+Async (\begin{DoxyParamCaption}\item[{string}]{name,  }\item[{string}]{owner,  }\item[{string}]{type,  }\item[{string}]{project }\end{DoxyParamCaption})}
+
+
+
+Deletes a file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the file. \\
+\hline
+{\em owner} & The owner of the file. \\
+\hline
+{\em type} & The type of the file. \\
+\hline
+{\em project} & The project associated with the file. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_a9c56cbaefc11a809a5551d2266e4f9a6}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_ab874b9ef2c0fb892aadd748e650e30f3}\label{class_model_control_app_1_1_services_1_1_file_service_ab874b9ef2c0fb892aadd748e650e30f3} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!DeleteFileByVersionAsync@{DeleteFileByVersionAsync}}
+\index{DeleteFileByVersionAsync@{DeleteFileByVersionAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{DeleteFileByVersionAsync()}{DeleteFileByVersionAsync()}}
+{\footnotesize\ttfamily async Task Model\+Control\+App.\+Services.\+File\+Service.\+Delete\+File\+By\+Version\+Async (\begin{DoxyParamCaption}\item[{string}]{name,  }\item[{string}]{owner,  }\item[{string}]{type,  }\item[{string}]{project,  }\item[{long}]{version }\end{DoxyParamCaption})}
+
+
+
+Deletes a file by version. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the file. \\
+\hline
+{\em owner} & The owner of the file. \\
+\hline
+{\em type} & The type of the file. \\
+\hline
+{\em project} & The project associated with the file. \\
+\hline
+{\em version} & The version of the file. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Argument\+Exception} & Thrown when the version is invalid. \\
+\hline
+\end{DoxyExceptions}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_aa9369b418c81dcb7a66939f2cabd445f}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_af9f670698c35a12399e8c600b6aa7973}\label{class_model_control_app_1_1_services_1_1_file_service_af9f670698c35a12399e8c600b6aa7973} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!DeleteProjectFilesAsync@{DeleteProjectFilesAsync}}
+\index{DeleteProjectFilesAsync@{DeleteProjectFilesAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{DeleteProjectFilesAsync()}{DeleteProjectFilesAsync()}}
+{\footnotesize\ttfamily async Task Model\+Control\+App.\+Services.\+File\+Service.\+Delete\+Project\+Files\+Async (\begin{DoxyParamCaption}\item[{string}]{owner,  }\item[{string}]{project }\end{DoxyParamCaption})}
+
+
+
+Deletes project files. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em owner} & The owner of the files. \\
+\hline
+{\em project} & The project associated with the files. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_a36862a19fde794e29501e6cd2495877e}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_a6d106a584d32d3255f0bd572a7a5d6a3}\label{class_model_control_app_1_1_services_1_1_file_service_a6d106a584d32d3255f0bd572a7a5d6a3} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!DownloadFileWithMetadataAsync@{DownloadFileWithMetadataAsync}}
+\index{DownloadFileWithMetadataAsync@{DownloadFileWithMetadataAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{DownloadFileWithMetadataAsync()}{DownloadFileWithMetadataAsync()}}
+{\footnotesize\ttfamily async Task$<$(Stream, Grid\+FSFile\+Info)$>$ Model\+Control\+App.\+Services.\+File\+Service.\+Download\+File\+With\+Metadata\+Async (\begin{DoxyParamCaption}\item[{string}]{name,  }\item[{string}]{owner,  }\item[{string}]{type,  }\item[{string}]{project,  }\item[{long?}]{version = {\ttfamily null} }\end{DoxyParamCaption})}
+
+
+
+Downloads a file with metadata. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the file. \\
+\hline
+{\em owner} & The owner of the file. \\
+\hline
+{\em type} & The type of the file. \\
+\hline
+{\em project} & The project associated with the file. \\
+\hline
+{\em version} & The version of the file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains the file stream and metadata. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Argument\+Exception} & Thrown when the version is invalid. \\
+\hline
+\end{DoxyExceptions}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_ac6cf06f3897ea5634d21aa93fb090437}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_a9b9e60331389b1541c8c4bf4d7b58da9}\label{class_model_control_app_1_1_services_1_1_file_service_a9b9e60331389b1541c8c4bf4d7b58da9} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!GetAllFilesInfoAsync@{GetAllFilesInfoAsync}}
+\index{GetAllFilesInfoAsync@{GetAllFilesInfoAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{GetAllFilesInfoAsync()}{GetAllFilesInfoAsync()}}
+{\footnotesize\ttfamily async Task$<$ List$<$ Grid\+FSFile\+Info $>$ $>$ Model\+Control\+App.\+Services.\+File\+Service.\+Get\+All\+Files\+Info\+Async (\begin{DoxyParamCaption}\item[{string}]{owner }\end{DoxyParamCaption})}
+
+
+
+Gets all files information for an owner. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em owner} & The owner of the files. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains a list of file information. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_ac2f07158124ee239d20a7d2b65879c30}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_aeab269711070b1dfba55fe61b48c21de}\label{class_model_control_app_1_1_services_1_1_file_service_aeab269711070b1dfba55fe61b48c21de} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!GetFileInfoAsync@{GetFileInfoAsync}}
+\index{GetFileInfoAsync@{GetFileInfoAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{GetFileInfoAsync()}{GetFileInfoAsync()}}
+{\footnotesize\ttfamily async Task$<$ List$<$ Grid\+FSFile\+Info $>$ $>$ Model\+Control\+App.\+Services.\+File\+Service.\+Get\+File\+Info\+Async (\begin{DoxyParamCaption}\item[{string}]{name,  }\item[{string}]{owner,  }\item[{string}]{type,  }\item[{string}]{project }\end{DoxyParamCaption})}
+
+
+
+Gets file information. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the file. \\
+\hline
+{\em owner} & The owner of the file. \\
+\hline
+{\em type} & The type of the file. \\
+\hline
+{\em project} & The project associated with the file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains a list of file information. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_a73218b4cab72e775bb8c1de0e0468568}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_afc72cb9835a5bd28b1ce966826e950db}\label{class_model_control_app_1_1_services_1_1_file_service_afc72cb9835a5bd28b1ce966826e950db} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!GetFileInfoByVersionAsync@{GetFileInfoByVersionAsync}}
+\index{GetFileInfoByVersionAsync@{GetFileInfoByVersionAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{GetFileInfoByVersionAsync()}{GetFileInfoByVersionAsync()}}
+{\footnotesize\ttfamily async Task$<$ Grid\+FSFile\+Info $>$ Model\+Control\+App.\+Services.\+File\+Service.\+Get\+File\+Info\+By\+Version\+Async (\begin{DoxyParamCaption}\item[{string}]{name,  }\item[{string}]{owner,  }\item[{string}]{type,  }\item[{string}]{project,  }\item[{long}]{version }\end{DoxyParamCaption})}
+
+
+
+Gets file information by version. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the file. \\
+\hline
+{\em owner} & The owner of the file. \\
+\hline
+{\em type} & The type of the file. \\
+\hline
+{\em project} & The project associated with the file. \\
+\hline
+{\em version} & The version of the file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains the file information. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Argument\+Exception} & Thrown when the version is invalid. \\
+\hline
+\end{DoxyExceptions}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_a0301c84443ac55d0acf0307565068d09}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_ae29aa658683786a4d1c8a876719031af}\label{class_model_control_app_1_1_services_1_1_file_service_ae29aa658683786a4d1c8a876719031af} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!GetLastVersionNumberAsync@{GetLastVersionNumberAsync}}
+\index{GetLastVersionNumberAsync@{GetLastVersionNumberAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{GetLastVersionNumberAsync()}{GetLastVersionNumberAsync()}}
+{\footnotesize\ttfamily async Task$<$ long $>$ Model\+Control\+App.\+Services.\+File\+Service.\+Get\+Last\+Version\+Number\+Async (\begin{DoxyParamCaption}\item[{string}]{file\+Name,  }\item[{string}]{owner,  }\item[{string}]{type,  }\item[{string}]{project }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Gets the last version number of a file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+Name} & The name of the file. \\
+\hline
+{\em owner} & The owner of the file. \\
+\hline
+{\em type} & The type of the file. \\
+\hline
+{\em project} & The project associated with the file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains the last version number. 
+\end{DoxyReturn}
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_a957bef78b70ba77eb79c66d1518f8d92}\label{class_model_control_app_1_1_services_1_1_file_service_a957bef78b70ba77eb79c66d1518f8d92} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!GetProjectFilesInfoAsync@{GetProjectFilesInfoAsync}}
+\index{GetProjectFilesInfoAsync@{GetProjectFilesInfoAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{GetProjectFilesInfoAsync()}{GetProjectFilesInfoAsync()}}
+{\footnotesize\ttfamily async Task$<$ List$<$ Grid\+FSFile\+Info $>$ $>$ Model\+Control\+App.\+Services.\+File\+Service.\+Get\+Project\+Files\+Info\+Async (\begin{DoxyParamCaption}\item[{string}]{owner,  }\item[{string}]{project }\end{DoxyParamCaption})}
+
+
+
+Gets project files information. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em owner} & The owner of the files. \\
+\hline
+{\em project} & The project associated with the files. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains a list of file information. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_a96718c402f097b58034ea416442dd9ee}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_a7928816c8ca65654148a96d17fa93ce0}\label{class_model_control_app_1_1_services_1_1_file_service_a7928816c8ca65654148a96d17fa93ce0} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!UpdateAllFilesInfoAsync@{UpdateAllFilesInfoAsync}}
+\index{UpdateAllFilesInfoAsync@{UpdateAllFilesInfoAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{UpdateAllFilesInfoAsync()}{UpdateAllFilesInfoAsync()}}
+{\footnotesize\ttfamily async Task Model\+Control\+App.\+Services.\+File\+Service.\+Update\+All\+Files\+Info\+Async (\begin{DoxyParamCaption}\item[{string}]{owner,  }\item[{Bson\+Document}]{updated\+Metadata }\end{DoxyParamCaption})}
+
+
+
+Updates all file information for an owner. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em owner} & The owner of the files. \\
+\hline
+{\em updated\+Metadata} & The updated metadata. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_aabaf5b6325939a6f3237c9763ccdbc59}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_a9eac06d1411cb7197920b8b131450a10}\label{class_model_control_app_1_1_services_1_1_file_service_a9eac06d1411cb7197920b8b131450a10} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!UpdateFileInfoAsync@{UpdateFileInfoAsync}}
+\index{UpdateFileInfoAsync@{UpdateFileInfoAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{UpdateFileInfoAsync()}{UpdateFileInfoAsync()}}
+{\footnotesize\ttfamily async Task Model\+Control\+App.\+Services.\+File\+Service.\+Update\+File\+Info\+Async (\begin{DoxyParamCaption}\item[{string}]{name,  }\item[{string}]{owner,  }\item[{string}]{type,  }\item[{string}]{project,  }\item[{Bson\+Document}]{updated\+Metadata }\end{DoxyParamCaption})}
+
+
+
+Updates file information. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the file. \\
+\hline
+{\em owner} & The owner of the file. \\
+\hline
+{\em type} & The type of the file. \\
+\hline
+{\em project} & The project associated with the file. \\
+\hline
+{\em updated\+Metadata} & The updated metadata. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_a36bf3695a25680c40afb2fb43db646d1}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_a9f23ea7a30824f7c85b84b0f992df9b8}\label{class_model_control_app_1_1_services_1_1_file_service_a9f23ea7a30824f7c85b84b0f992df9b8} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!UpdateFileInfoByProjectAsync@{UpdateFileInfoByProjectAsync}}
+\index{UpdateFileInfoByProjectAsync@{UpdateFileInfoByProjectAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{UpdateFileInfoByProjectAsync()}{UpdateFileInfoByProjectAsync()}}
+{\footnotesize\ttfamily async Task Model\+Control\+App.\+Services.\+File\+Service.\+Update\+File\+Info\+By\+Project\+Async (\begin{DoxyParamCaption}\item[{string}]{owner,  }\item[{string}]{project,  }\item[{Bson\+Document}]{updated\+Metadata }\end{DoxyParamCaption})}
+
+
+
+Updates file information by project. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em owner} & The owner of the files. \\
+\hline
+{\em project} & The project associated with the files. \\
+\hline
+{\em updated\+Metadata} & The updated metadata. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_aa398e114e084155a377c1920fb92a260}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_a6e3d2fa58fb5e06e549cf5d45dc4670d}\label{class_model_control_app_1_1_services_1_1_file_service_a6e3d2fa58fb5e06e549cf5d45dc4670d} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!UpdateFileInfoByVersionAsync@{UpdateFileInfoByVersionAsync}}
+\index{UpdateFileInfoByVersionAsync@{UpdateFileInfoByVersionAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{UpdateFileInfoByVersionAsync()}{UpdateFileInfoByVersionAsync()}}
+{\footnotesize\ttfamily async Task Model\+Control\+App.\+Services.\+File\+Service.\+Update\+File\+Info\+By\+Version\+Async (\begin{DoxyParamCaption}\item[{string}]{name,  }\item[{string}]{owner,  }\item[{string}]{type,  }\item[{string}]{project,  }\item[{long}]{version,  }\item[{Bson\+Document}]{updated\+Metadata }\end{DoxyParamCaption})}
+
+
+
+Updates file information by version. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the file. \\
+\hline
+{\em owner} & The owner of the file. \\
+\hline
+{\em type} & The type of the file. \\
+\hline
+{\em project} & The project associated with the file. \\
+\hline
+{\em version} & The version of the file. \\
+\hline
+{\em updated\+Metadata} & The updated metadata. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Argument\+Exception} & Thrown when the version is invalid. \\
+\hline
+\end{DoxyExceptions}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_acfc55cd7cdae64d7f936c651d4f7df96}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_afef6fe06cf56da8687dbe3bd45c7dd96}\label{class_model_control_app_1_1_services_1_1_file_service_afef6fe06cf56da8687dbe3bd45c7dd96} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!UploadFileAsync@{UploadFileAsync}}
+\index{UploadFileAsync@{UploadFileAsync}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{UploadFileAsync()}{UploadFileAsync()}}
+{\footnotesize\ttfamily async Task$<$ Object\+Id $>$ Model\+Control\+App.\+Services.\+File\+Service.\+Upload\+File\+Async (\begin{DoxyParamCaption}\item[{string}]{name,  }\item[{string}]{owner,  }\item[{string}]{type,  }\item[{string}]{project,  }\item[{Stream}]{stream,  }\item[{string?}]{description = {\ttfamily null},  }\item[{long?}]{version = {\ttfamily null} }\end{DoxyParamCaption})}
+
+
+
+Uploads a file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the file. \\
+\hline
+{\em owner} & The owner of the file. \\
+\hline
+{\em type} & The type of the file. \\
+\hline
+{\em project} & The project associated with the file. \\
+\hline
+{\em stream} & The file stream. \\
+\hline
+{\em description} & The description of the file. \\
+\hline
+{\em version} & The version of the file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains the Object\+Id of the uploaded file. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Argument\+Exception} & Thrown when the version is invalid. \\
+\hline
+\end{DoxyExceptions}
+
+
+Implements \mbox{\hyperlink{interface_model_control_app_1_1_services_1_1_i_file_service_ae3dbff94c9fc22de27685c900fa9c356}{Model\+Control\+App.\+Services.\+IFile\+Service}}.
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_model_control_app_1_1_services_1_1_file_service_ad4826eaefd31aa713cad80fe1d2711f1}\label{class_model_control_app_1_1_services_1_1_file_service_ad4826eaefd31aa713cad80fe1d2711f1} 
+\index{ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}!\_fileRepository@{\_fileRepository}}
+\index{\_fileRepository@{\_fileRepository}!ModelControlApp.Services.FileService@{ModelControlApp.Services.FileService}}
+\doxysubsubsection{\texorpdfstring{\_fileRepository}{\_fileRepository}}
+{\footnotesize\ttfamily readonly \mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository}{IFile\+Repository}} Model\+Control\+App.\+Services.\+File\+Service.\+\_\+file\+Repository\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Model\+Control\+App/\+Services/\mbox{\hyperlink{_file_service_8cs}{File\+Service.\+cs}}\end{DoxyCompactItemize}

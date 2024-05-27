@@ -1,26 +1,26 @@
-﻿using ModelControlApp.ApiClients;
+﻿/**
+ * @file LocalVersionControlView.xaml.cs
+ * @brief Interaction logic for LocalVersionControlView.xaml
+ */
+
+using ModelControlApp.ApiClients;
 using ModelControlApp.Repositories;
 using ModelControlApp.Services;
 using ModelControlApp.ViewModels;
 using MongoDB.Driver;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ModelControlApp
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    /**
+     * @class LocalVersionControlView
+     * @brief Interaction logic for LocalVersionControlView.xaml
+     */
     public partial class LocalVersionControlView : Window
     {
+        /**
+         * @brief Initializes a new instance of the LocalVersionControlView class.
+         */
         public LocalVersionControlView()
         {
             InitializeComponent();
@@ -29,7 +29,7 @@ namespace ModelControlApp
             var fileRepository = new FileRepository(client, databaseName);
             var fileService = new FileService(fileRepository);
             var fileApiClient = new FileApiClient("http://localhost:5000/");
-            DataContext = new LocalVersionControlViewModel(fileService,fileApiClient);
+            DataContext = new LocalVersionControlViewModel(fileService, fileApiClient);
         }
     }
 }

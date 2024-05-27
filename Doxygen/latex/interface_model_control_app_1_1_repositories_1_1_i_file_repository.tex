@@ -1,0 +1,215 @@
+\doxysection{Model\+Control\+App.\+Repositories.\+IFile\+Repository Interface Reference}
+\hypertarget{interface_model_control_app_1_1_repositories_1_1_i_file_repository}{}\label{interface_model_control_app_1_1_repositories_1_1_i_file_repository}\index{ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}}
+
+
+Interface for file repository operations.  
+
+
+Inheritance diagram for Model\+Control\+App.\+Repositories.\+IFile\+Repository\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{interface_model_control_app_1_1_repositories_1_1_i_file_repository}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+Task \mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository_a4b55a672c3c3d350ba25a5a2a6f5af03}{Delete\+Many\+Async}} (Bson\+Document query)
+\begin{DoxyCompactList}\small\item\em Deletes multiple files based on the given query. \end{DoxyCompactList}\item 
+Task \mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ad593254cbe9e6be9689c6e3629ba5187}{Delete\+One\+Async}} (Bson\+Document query)
+\begin{DoxyCompactList}\small\item\em Deletes a single file based on the given query. \end{DoxyCompactList}\item 
+Task$<$ Stream $>$ \mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ad04d517fc9da8f1158788ef27661a012}{Download\+Async}} (Bson\+Document query)
+\begin{DoxyCompactList}\small\item\em Downloads a file based on the given query. \end{DoxyCompactList}\item 
+Task$<$ List$<$ Grid\+FSFile\+Info $>$ $>$ \mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository_a38bd7fd6c6a1e345c8aae8e4f05ddedf}{Get\+Many\+Async}} (Bson\+Document query)
+\begin{DoxyCompactList}\small\item\em Gets information for multiple files based on the given query. \end{DoxyCompactList}\item 
+Task$<$ Grid\+FSFile\+Info $>$ \mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ae463d6bb9f3aabf91f88cce8fcd959a7}{Get\+One\+Async}} (Bson\+Document query)
+\begin{DoxyCompactList}\small\item\em Gets information for a single file based on the given query. \end{DoxyCompactList}\item 
+Task \mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository_a5dd47612e77ce48b73d8caf2b9287a63}{Update\+Many\+Async}} (Bson\+Document query, Bson\+Document updated\+Metadata)
+\begin{DoxyCompactList}\small\item\em Updates metadata for multiple files based on the given query. \end{DoxyCompactList}\item 
+Task \mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository_afad94353d9104bf83df1c8764e72730a}{Update\+One\+Async}} (Bson\+Document query, Bson\+Document updated\+Metadata)
+\begin{DoxyCompactList}\small\item\em Updates metadata for a single file based on the given query. \end{DoxyCompactList}\item 
+Task$<$ Object\+Id $>$ \mbox{\hyperlink{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ac25e6449164ba7bac9f914541cb872b8}{Upload\+Async}} (string file\+Name, Stream stream, Bson\+Document metadata)
+\begin{DoxyCompactList}\small\item\em Uploads a file. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Interface for file repository operations. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{interface_model_control_app_1_1_repositories_1_1_i_file_repository_a4b55a672c3c3d350ba25a5a2a6f5af03}\label{interface_model_control_app_1_1_repositories_1_1_i_file_repository_a4b55a672c3c3d350ba25a5a2a6f5af03} 
+\index{ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}!DeleteManyAsync@{DeleteManyAsync}}
+\index{DeleteManyAsync@{DeleteManyAsync}!ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}}
+\doxysubsubsection{\texorpdfstring{DeleteManyAsync()}{DeleteManyAsync()}}
+{\footnotesize\ttfamily Task Model\+Control\+App.\+Repositories.\+IFile\+Repository.\+Delete\+Many\+Async (\begin{DoxyParamCaption}\item[{Bson\+Document}]{query }\end{DoxyParamCaption})}
+
+
+
+Deletes multiple files based on the given query. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query} & The query to match files to be deleted. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{class_model_control_app_1_1_repositories_1_1_file_repository_a69040ac576e354c3f1ef0f963c6b4447}{Model\+Control\+App.\+Repositories.\+File\+Repository}}.
+
+\Hypertarget{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ad593254cbe9e6be9689c6e3629ba5187}\label{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ad593254cbe9e6be9689c6e3629ba5187} 
+\index{ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}!DeleteOneAsync@{DeleteOneAsync}}
+\index{DeleteOneAsync@{DeleteOneAsync}!ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}}
+\doxysubsubsection{\texorpdfstring{DeleteOneAsync()}{DeleteOneAsync()}}
+{\footnotesize\ttfamily Task Model\+Control\+App.\+Repositories.\+IFile\+Repository.\+Delete\+One\+Async (\begin{DoxyParamCaption}\item[{Bson\+Document}]{query }\end{DoxyParamCaption})}
+
+
+
+Deletes a single file based on the given query. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query} & The query to match the file to be deleted. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{class_model_control_app_1_1_repositories_1_1_file_repository_a72288d0f6197ecdea815d8e22aefc38f}{Model\+Control\+App.\+Repositories.\+File\+Repository}}.
+
+\Hypertarget{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ad04d517fc9da8f1158788ef27661a012}\label{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ad04d517fc9da8f1158788ef27661a012} 
+\index{ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}!DownloadAsync@{DownloadAsync}}
+\index{DownloadAsync@{DownloadAsync}!ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}}
+\doxysubsubsection{\texorpdfstring{DownloadAsync()}{DownloadAsync()}}
+{\footnotesize\ttfamily Task$<$ Stream $>$ Model\+Control\+App.\+Repositories.\+IFile\+Repository.\+Download\+Async (\begin{DoxyParamCaption}\item[{Bson\+Document}]{query }\end{DoxyParamCaption})}
+
+
+
+Downloads a file based on the given query. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query} & The query to match the file to be downloaded. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains the file stream. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{class_model_control_app_1_1_repositories_1_1_file_repository_a50db391ef5f14b27ef3d0fd265b2fe28}{Model\+Control\+App.\+Repositories.\+File\+Repository}}.
+
+\Hypertarget{interface_model_control_app_1_1_repositories_1_1_i_file_repository_a38bd7fd6c6a1e345c8aae8e4f05ddedf}\label{interface_model_control_app_1_1_repositories_1_1_i_file_repository_a38bd7fd6c6a1e345c8aae8e4f05ddedf} 
+\index{ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}!GetManyAsync@{GetManyAsync}}
+\index{GetManyAsync@{GetManyAsync}!ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}}
+\doxysubsubsection{\texorpdfstring{GetManyAsync()}{GetManyAsync()}}
+{\footnotesize\ttfamily Task$<$ List$<$ Grid\+FSFile\+Info $>$ $>$ Model\+Control\+App.\+Repositories.\+IFile\+Repository.\+Get\+Many\+Async (\begin{DoxyParamCaption}\item[{Bson\+Document}]{query }\end{DoxyParamCaption})}
+
+
+
+Gets information for multiple files based on the given query. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query} & The query to match the files. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains a list of file information. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{class_model_control_app_1_1_repositories_1_1_file_repository_ac0dfa3d076f78fd2c3f3543fcd35cc26}{Model\+Control\+App.\+Repositories.\+File\+Repository}}.
+
+\Hypertarget{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ae463d6bb9f3aabf91f88cce8fcd959a7}\label{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ae463d6bb9f3aabf91f88cce8fcd959a7} 
+\index{ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}!GetOneAsync@{GetOneAsync}}
+\index{GetOneAsync@{GetOneAsync}!ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}}
+\doxysubsubsection{\texorpdfstring{GetOneAsync()}{GetOneAsync()}}
+{\footnotesize\ttfamily Task$<$ Grid\+FSFile\+Info $>$ Model\+Control\+App.\+Repositories.\+IFile\+Repository.\+Get\+One\+Async (\begin{DoxyParamCaption}\item[{Bson\+Document}]{query }\end{DoxyParamCaption})}
+
+
+
+Gets information for a single file based on the given query. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query} & The query to match the file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains the file information. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{class_model_control_app_1_1_repositories_1_1_file_repository_a55bccfdf7ccaa8d33230aee17eb650c6}{Model\+Control\+App.\+Repositories.\+File\+Repository}}.
+
+\Hypertarget{interface_model_control_app_1_1_repositories_1_1_i_file_repository_a5dd47612e77ce48b73d8caf2b9287a63}\label{interface_model_control_app_1_1_repositories_1_1_i_file_repository_a5dd47612e77ce48b73d8caf2b9287a63} 
+\index{ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}!UpdateManyAsync@{UpdateManyAsync}}
+\index{UpdateManyAsync@{UpdateManyAsync}!ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}}
+\doxysubsubsection{\texorpdfstring{UpdateManyAsync()}{UpdateManyAsync()}}
+{\footnotesize\ttfamily Task Model\+Control\+App.\+Repositories.\+IFile\+Repository.\+Update\+Many\+Async (\begin{DoxyParamCaption}\item[{Bson\+Document}]{query,  }\item[{Bson\+Document}]{updated\+Metadata }\end{DoxyParamCaption})}
+
+
+
+Updates metadata for multiple files based on the given query. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query} & The query to match the files to be updated. \\
+\hline
+{\em updated\+Metadata} & The updated metadata. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{class_model_control_app_1_1_repositories_1_1_file_repository_ad5239a47ca3cb77d07b29e216fe84142}{Model\+Control\+App.\+Repositories.\+File\+Repository}}.
+
+\Hypertarget{interface_model_control_app_1_1_repositories_1_1_i_file_repository_afad94353d9104bf83df1c8764e72730a}\label{interface_model_control_app_1_1_repositories_1_1_i_file_repository_afad94353d9104bf83df1c8764e72730a} 
+\index{ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}!UpdateOneAsync@{UpdateOneAsync}}
+\index{UpdateOneAsync@{UpdateOneAsync}!ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}}
+\doxysubsubsection{\texorpdfstring{UpdateOneAsync()}{UpdateOneAsync()}}
+{\footnotesize\ttfamily Task Model\+Control\+App.\+Repositories.\+IFile\+Repository.\+Update\+One\+Async (\begin{DoxyParamCaption}\item[{Bson\+Document}]{query,  }\item[{Bson\+Document}]{updated\+Metadata }\end{DoxyParamCaption})}
+
+
+
+Updates metadata for a single file based on the given query. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query} & The query to match the file to be updated. \\
+\hline
+{\em updated\+Metadata} & The updated metadata. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{class_model_control_app_1_1_repositories_1_1_file_repository_a19d45190e1cf22911813a266ddf33368}{Model\+Control\+App.\+Repositories.\+File\+Repository}}.
+
+\Hypertarget{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ac25e6449164ba7bac9f914541cb872b8}\label{interface_model_control_app_1_1_repositories_1_1_i_file_repository_ac25e6449164ba7bac9f914541cb872b8} 
+\index{ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}!UploadAsync@{UploadAsync}}
+\index{UploadAsync@{UploadAsync}!ModelControlApp.Repositories.IFileRepository@{ModelControlApp.Repositories.IFileRepository}}
+\doxysubsubsection{\texorpdfstring{UploadAsync()}{UploadAsync()}}
+{\footnotesize\ttfamily Task$<$ Object\+Id $>$ Model\+Control\+App.\+Repositories.\+IFile\+Repository.\+Upload\+Async (\begin{DoxyParamCaption}\item[{string}]{file\+Name,  }\item[{Stream}]{stream,  }\item[{Bson\+Document}]{metadata }\end{DoxyParamCaption})}
+
+
+
+Uploads a file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+Name} & The name of the file. \\
+\hline
+{\em stream} & The file stream. \\
+\hline
+{\em metadata} & The file metadata. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A task that represents the asynchronous operation. The task result contains the Object\+Id of the uploaded file. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{class_model_control_app_1_1_repositories_1_1_file_repository_a49f7dac920ef5f9c5a8c297cd0dee04f}{Model\+Control\+App.\+Repositories.\+File\+Repository}}.
+
+
+
+The documentation for this interface was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Model\+Control\+App/\+Repositories/\mbox{\hyperlink{_i_file_repository_8cs}{IFile\+Repository.\+cs}}\end{DoxyCompactItemize}

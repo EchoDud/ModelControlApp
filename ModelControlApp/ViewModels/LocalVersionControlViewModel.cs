@@ -24,6 +24,10 @@ using System.Xml;
 
 namespace ModelControlApp.ViewModels
 {
+    /**
+     * @class LocalVersionControlViewModel
+     * @brief ViewModel for local version control.
+     */
     public class LocalVersionControlViewModel : BindableBase
     {
         private readonly IFileService _fileService;
@@ -40,6 +44,11 @@ namespace ModelControlApp.ViewModels
         private bool _isLoggedIn = false;
         private string _authToken;
 
+        /**
+         * @brief Initializes a new instance of the LocalVersionControlViewModel class.
+         * @param fileService The file service.
+         * @param fileApiClient The file API client.
+         */
         public LocalVersionControlViewModel(IFileService fileService, FileApiClient fileApiClient)
         {
             _fileService = fileService;
@@ -169,7 +178,7 @@ namespace ModelControlApp.ViewModels
         {
             get => _isLoggedIn;
             set { SetProperty(ref _isLoggedIn, value); }
-            
+
         }
 
         public string AuthToken
@@ -188,36 +197,63 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Determines whether a version can be pushed.
+         * @return True if the version can be pushed, otherwise false.
+         */
         private bool CanPushVersion()
         {
             return SelectedVersion != null && IsLoggedIn;
         }
 
+        /**
+         * @brief Determines whether a model can be pushed.
+         * @return True if the model can be pushed, otherwise false.
+         */
         private bool CanPushModel()
         {
             return SelectedModel != null && IsLoggedIn;
         }
 
+        /**
+         * @brief Determines whether a project can be pushed.
+         * @return True if the project can be pushed, otherwise false.
+         */
         private bool CanPushProject()
         {
             return SelectedProject != null && IsLoggedIn;
         }
 
+        /**
+         * @brief Determines whether a server model can be deleted.
+         * @return True if the server model can be deleted, otherwise false.
+         */
         private bool CanDeleteServerModel()
         {
             return SelectedServerModel != null && IsLoggedIn;
         }
 
+        /**
+         * @brief Determines whether a server version can be deleted.
+         * @return True if the server version can be deleted, otherwise false.
+         */
         private bool CanDeleteServerVersion()
         {
             return SelectedServerVersion != null && IsLoggedIn;
         }
 
+        /**
+         * @brief Determines whether a server project can be deleted.
+         * @return True if the server project can be deleted, otherwise false.
+         */
         private bool CanDeleteServerProject()
         {
             return SelectedServerProject != null && IsLoggedIn;
         }
 
+        /**
+         * @brief Loads server projects.
+         */
         private async void LoadServerProjects()
         {
             try
@@ -254,6 +290,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Logs out the user.
+         */
         private void ExecuteLogout()
         {
             AuthToken = null;
@@ -265,6 +304,9 @@ namespace ModelControlApp.ViewModels
             MessageBox.Show("Logged out successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        /**
+         * @brief Pushes a version to the server.
+         */
         private async void PushVersionToServer()
         {
             try
@@ -290,6 +332,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Pushes a model to the server.
+         */
         private async void PushModelToServer()
         {
             try
@@ -318,6 +363,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Pushes a project to the server.
+         */
         private async void PushProjectToServer()
         {
             try
@@ -349,6 +397,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Deletes a server model.
+         */
         private async void DeleteServerModel()
         {
             if (SelectedServerModel != null)
@@ -372,6 +423,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Deletes a server version.
+         */
         private async void DeleteServerVersion()
         {
             if (SelectedServerVersion != null)
@@ -396,6 +450,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Deletes a server project.
+         */
         private async void DeleteServerProject()
         {
             if (SelectedServerProject != null)
@@ -433,11 +490,17 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Loads initial data.
+         */
         private async void LoadInitialData()
         {
             await LoadAllModelsByOwner("User");
         }
 
+        /**
+         * @brief Opens the login dialog.
+         */
         private void ExecuteOpenLoginDialog()
         {
             var loginView = new LoginView();
@@ -452,6 +515,9 @@ namespace ModelControlApp.ViewModels
             loginView.ShowDialog();
         }
 
+        /**
+         * @brief Opens the register dialog.
+         */
         private void ExecuteOpenRegisterDialog()
         {
             var registerView = new RegisterView();
@@ -466,6 +532,9 @@ namespace ModelControlApp.ViewModels
             registerView.ShowDialog();
         }
 
+        /**
+         * @brief Loads the selected model version.
+         */
         private async void LoadSelectedModelVersion()
         {
             if (SelectedModel != null && SelectedVersion != null)
@@ -483,6 +552,13 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Loads a model from a stream.
+         * @param stream The model stream.
+         * @param fileExtension The file extension.
+         * @return The loaded Model3D.
+         * @exception NotSupportedException Thrown when the file format is unsupported.
+         */
         private Model3D LoadModelFromStream(Stream stream, string fileExtension)
         {
             switch (fileExtension.ToLower())
@@ -500,6 +576,10 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Loads all models by owner.
+         * @param owner The owner of the models.
+         */
         public async Task LoadAllModelsByOwner(string owner)
         {
             try
@@ -567,7 +647,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
-
+        /**
+         * @brief Creates a new project.
+         */
         private void CreateProject()
         {
             var projectName = Microsoft.VisualBasic.Interaction.InputBox("Enter new project name:", "New Project", "Default Project");
@@ -587,6 +669,9 @@ namespace ModelControlApp.ViewModels
             LoadServerProjects();
         }
 
+        /**
+         * @brief Deletes the selected project.
+         */
         private async void DeleteProject()
         {
             if (SelectedProject != null)
@@ -602,6 +687,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Adds a new model.
+         */
         private async void AddModel()
         {
             var openFileDialog = new OpenFileDialog { Filter = "Model Files|*.stl;*.obj;*.3mf" };
@@ -648,6 +736,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Removes the selected model.
+         */
         private async void RemoveModel()
         {
             if (SelectedModel != null)
@@ -659,6 +750,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Removes the selected version.
+         */
         private async void RemoveVersion()
         {
             if (SelectedModel != null && SelectedVersion != null)
@@ -675,6 +769,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Updates the selected model.
+         */
         private async void UpdateModel()
         {
             var openFileDialog = new OpenFileDialog { Filter = "Model Files|*.stl;*.obj;*.3mf" };
@@ -695,6 +792,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Extracts the selected model.
+         */
         private async void ExtractModel()
         {
             if (SelectedModel == null)
@@ -725,6 +825,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Clones the selected server version.
+         */
         private async void CloneVersion()
         {
             if (SelectedServerModel != null && SelectedServerVersion != null)
@@ -765,6 +868,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Clones the selected server model.
+         */
         private async void CloneModel()
         {
             if (SelectedServerModel != null)
@@ -808,6 +914,9 @@ namespace ModelControlApp.ViewModels
             }
         }
 
+        /**
+         * @brief Clones the selected server project.
+         */
         private async void CloneProject()
         {
             if (SelectedServerProject != null)
@@ -853,8 +962,5 @@ namespace ModelControlApp.ViewModels
                 }
             }
         }
-
-
-
     }
 }

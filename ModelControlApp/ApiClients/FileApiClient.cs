@@ -22,11 +22,19 @@ using MongoDB.Driver.GridFS;
 
 namespace ModelControlApp.ApiClients
 {
+    /**
+     * @class FileApiClient
+     * @brief A client for handling file-related API calls.
+     */
     public class FileApiClient
     {
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl;
 
+        /**
+         * @brief Initializes a new instance of the FileApiClient class.
+         * @param baseUrl The base URL of the API.
+         */
         public FileApiClient(string baseUrl)
         {
             var handler = new HttpClientHandler
@@ -38,11 +46,20 @@ namespace ModelControlApp.ApiClients
             _baseUrl = baseUrl.TrimEnd('/');
         }
 
+        /**
+         * @brief Sets the authorization token for the HTTP client.
+         * @param token The authorization token.
+         */
         public void SetToken(string token)
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
+        /**
+         * @brief Deletes a file or a specific version of a file.
+         * @param queryRequest The file query details.
+         * @exception HttpRequestException Thrown when the deletion request fails.
+         */
         public async Task DeleteFileOrVersionAsync(FileQueryDTO queryRequest)
         {
             var query = $"?Name={queryRequest.Name}&Type={queryRequest.Type}&Project={queryRequest.Project}";
@@ -59,6 +76,12 @@ namespace ModelControlApp.ApiClients
             }
         }
 
+        /**
+         * @brief Uploads a new file version or a new file with owner information.
+         * @param uploadRequest The file upload details.
+         * @return A task that represents the asynchronous operation. The task result contains the response string.
+         * @exception HttpRequestException Thrown when the upload request fails.
+         */
         public async Task<string> UploadOwnerVersionAsync(FileUploadDTO uploadRequest)
         {
             using var content = new MultipartFormDataContent();
@@ -87,6 +110,11 @@ namespace ModelControlApp.ApiClients
             return result;
         }
 
+        /**
+         * @brief Retrieves all projects with their details.
+         * @return A task that represents the asynchronous operation. The task result contains a collection of projects.
+         * @exception Exception Thrown when the retrieval of projects fails.
+         */
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         {
             var url = $"{_baseUrl}/api/File/all/info";
@@ -191,6 +219,13 @@ namespace ModelControlApp.ApiClients
             return projects;
         }
 
+        /**
+         * @brief Downloads a file along with its metadata.
+         * @param fileQueryDto The file query details.
+         * @return A task that represents the asynchronous operation. The task result contains a tuple of the file stream and the file metadata.
+         * @exception HttpRequestException Thrown when the download request fails.
+         * @exception InvalidOperationException Thrown when the response does not contain metadata.
+         */
         public async Task<(Stream, GridFSFileInfo)> DownloadFileWithMetadataAsync(FileQueryDTO fileQueryDto)
         {
             var query = $"?Name={fileQueryDto.Name}&Type={fileQueryDto.Type}&Project={fileQueryDto.Project}&Version={fileQueryDto.Version}";
@@ -211,9 +246,4 @@ namespace ModelControlApp.ApiClients
             return (stream, fileInfo);
         }
     }
-
-
-
-
-
 }

@@ -1,4 +1,9 @@
-﻿using ModelControlApp.Services;
+﻿/**
+ * @file LoginViewModel.cs
+ * @brief ViewModel for user login.
+ */
+
+using ModelControlApp.Services;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -16,6 +21,10 @@ using ModelControlApp.Infrastructure;
 
 namespace ModelControlApp.ViewModels
 {
+    /**
+     * @class LoginViewModel
+     * @brief ViewModel for user login.
+     */
     public class LoginViewModel : BindableBase
     {
         private readonly AuthApiClient _authApiClient;
@@ -26,6 +35,10 @@ namespace ModelControlApp.ViewModels
 
         public ICommand LoginCommand { get; }
 
+        /**
+         * @brief Initializes a new instance of the LoginViewModel class.
+         * @param authApiClient The authentication API client.
+         */
         public LoginViewModel(AuthApiClient authApiClient)
         {
             _authApiClient = authApiClient;
@@ -44,6 +57,9 @@ namespace ModelControlApp.ViewModels
             set { SetProperty(ref _password, value); }
         }
 
+        /**
+         * @brief Logs in the user.
+         */
         private async void LoginUser()
         {
             try

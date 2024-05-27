@@ -11,19 +11,36 @@ using System.Threading.Tasks;
 
 namespace ModelControlApp.Services
 {
+    /**
+     * @class FileService
+     * @brief Service for handling file operations.
+     */
     public class FileService : IFileService
     {
         private readonly IFileRepository _fileRepository;
 
+        /**
+         * @brief Initializes a new instance of the FileService class.
+         * @param fileRepository The file repository.
+         */
         public FileService(IFileRepository fileRepository)
         {
             _fileRepository = fileRepository;
         }
 
-        public async Task<ObjectId> UploadFileAsync(string name,
-            string owner, string type,
-            string project, Stream stream,
-            string? description = null, long? version = null)
+        /**
+         * @brief Uploads a file.
+         * @param name The name of the file.
+         * @param owner The owner of the file.
+         * @param type The type of the file.
+         * @param project The project associated with the file.
+         * @param stream The file stream.
+         * @param description The description of the file.
+         * @param version The version of the file.
+         * @return A task that represents the asynchronous operation. The task result contains the ObjectId of the uploaded file.
+         * @exception ArgumentException Thrown when the version is invalid.
+         */
+        public async Task<ObjectId> UploadFileAsync(string name, string owner, string type, string project, Stream stream, string? description = null, long? version = null)
         {
             if (version.HasValue && (version.Value < -1 || version.Value == 0))
             {
@@ -65,6 +82,16 @@ namespace ModelControlApp.Services
             }
         }
 
+        /**
+         * @brief Downloads a file with metadata.
+         * @param name The name of the file.
+         * @param owner The owner of the file.
+         * @param type The type of the file.
+         * @param project The project associated with the file.
+         * @param version The version of the file.
+         * @return A task that represents the asynchronous operation. The task result contains the file stream and metadata.
+         * @exception ArgumentException Thrown when the version is invalid.
+         */
         public async Task<(Stream, GridFSFileInfo)> DownloadFileWithMetadataAsync(string name, string owner, string type, string project, long? version = null)
         {
             if (version.HasValue && (version.Value < -1 || version.Value == 0))
@@ -74,9 +101,7 @@ namespace ModelControlApp.Services
 
             try
             {
-                long versionToUse = version.HasValue && version.Value != -1
-                                    ? version.Value
-                                    : await GetLastVersionNumberAsync(name, owner, type, project);
+                long versionToUse = version.HasValue && version.Value != -1 ? version.Value : await GetLastVersionNumberAsync(name, owner, type, project);
 
                 var query = new BsonDocument
                 {
@@ -103,9 +128,17 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task<GridFSFileInfo> GetFileInfoByVersionAsync(string name,
-            string owner, string type,
-            string project, long version)
+        /**
+         * @brief Gets file information by version.
+         * @param name The name of the file.
+         * @param owner The owner of the file.
+         * @param type The type of the file.
+         * @param project The project associated with the file.
+         * @param version The version of the file.
+         * @return A task that represents the asynchronous operation. The task result contains the file information.
+         * @exception ArgumentException Thrown when the version is invalid.
+         */
+        public async Task<GridFSFileInfo> GetFileInfoByVersionAsync(string name, string owner, string type, string project, long version)
         {
             if (version < -1 || version == 0)
             {
@@ -114,9 +147,7 @@ namespace ModelControlApp.Services
 
             try
             {
-                long versionToUse = version != -1
-                                    ? version
-                                    : await GetLastVersionNumberAsync(name, owner, type, project);
+                long versionToUse = version != -1 ? version : await GetLastVersionNumberAsync(name, owner, type, project);
 
                 var query = new BsonDocument
                 {
@@ -135,9 +166,15 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task<List<GridFSFileInfo>> GetFileInfoAsync(string name,
-            string owner, string type,
-            string project)
+        /**
+         * @brief Gets file information.
+         * @param name The name of the file.
+         * @param owner The owner of the file.
+         * @param type The type of the file.
+         * @param project The project associated with the file.
+         * @return A task that represents the asynchronous operation. The task result contains a list of file information.
+         */
+        public async Task<List<GridFSFileInfo>> GetFileInfoAsync(string name, string owner, string type, string project)
         {
             try
             {
@@ -157,6 +194,12 @@ namespace ModelControlApp.Services
             }
         }
 
+        /**
+         * @brief Gets project files information.
+         * @param owner The owner of the files.
+         * @param project The project associated with the files.
+         * @return A task that represents the asynchronous operation. The task result contains a list of file information.
+         */
         public async Task<List<GridFSFileInfo>> GetProjectFilesInfoAsync(string owner, string project)
         {
             try
@@ -164,7 +207,7 @@ namespace ModelControlApp.Services
                 var query = new BsonDocument
                 {
                     { "metadata.owner", owner },
-                    { "metadata.project", project}
+                    { "metadata.project", project }
                 };
 
                 return await _fileRepository.GetManyAsync(query);
@@ -175,6 +218,11 @@ namespace ModelControlApp.Services
             }
         }
 
+        /**
+         * @brief Gets all files information for an owner.
+         * @param owner The owner of the files.
+         * @return A task that represents the asynchronous operation. The task result contains a list of file information.
+         */
         public async Task<List<GridFSFileInfo>> GetAllFilesInfoAsync(string owner)
         {
             try
@@ -192,10 +240,17 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task UpdateFileInfoByVersionAsync(string name,
-            string owner, string type,
-            string project, long version,
-            BsonDocument updatedMetadata)
+        /**
+         * @brief Updates file information by version.
+         * @param name The name of the file.
+         * @param owner The owner of the file.
+         * @param type The type of the file.
+         * @param project The project associated with the file.
+         * @param version The version of the file.
+         * @param updatedMetadata The updated metadata.
+         * @exception ArgumentException Thrown when the version is invalid.
+         */
+        public async Task UpdateFileInfoByVersionAsync(string name, string owner, string type, string project, long version, BsonDocument updatedMetadata)
         {
             if (version < -1 || version == 0)
             {
@@ -204,16 +259,14 @@ namespace ModelControlApp.Services
 
             try
             {
-                long versionToUse = version != -1
-                                    ? version
-                                    : await GetLastVersionNumberAsync(name, owner, type, project);
+                long versionToUse = version != -1 ? version : await GetLastVersionNumberAsync(name, owner, type, project);
 
                 var query = new BsonDocument
                 {
                     { "filename", name },
                     { "metadata.owner", owner },
                     { "metadata.file_type", type },
-                    { "metadata.project", project},
+                    { "metadata.project", project },
                     { "metadata.version_number", versionToUse }
                 };
 
@@ -225,9 +278,15 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task UpdateFileInfoAsync(string name,
-            string owner, string type,
-            string project, BsonDocument updatedMetadata)
+        /**
+         * @brief Updates file information.
+         * @param name The name of the file.
+         * @param owner The owner of the file.
+         * @param type The type of the file.
+         * @param project The project associated with the file.
+         * @param updatedMetadata The updated metadata.
+         */
+        public async Task UpdateFileInfoAsync(string name, string owner, string type, string project, BsonDocument updatedMetadata)
         {
             try
             {
@@ -236,7 +295,7 @@ namespace ModelControlApp.Services
                     { "filename", name },
                     { "metadata.owner", owner },
                     { "metadata.file_type", type },
-                    { "metadata.project", project}
+                    { "metadata.project", project }
                 };
 
                 await _fileRepository.UpdateManyAsync(query, updatedMetadata);
@@ -247,15 +306,20 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task UpdateFileInfoByProjectAsync(string owner,
-           string project, BsonDocument updatedMetadata)
+        /**
+         * @brief Updates file information by project.
+         * @param owner The owner of the files.
+         * @param project The project associated with the files.
+         * @param updatedMetadata The updated metadata.
+         */
+        public async Task UpdateFileInfoByProjectAsync(string owner, string project, BsonDocument updatedMetadata)
         {
             try
             {
                 var query = new BsonDocument
                 {
                     { "metadata.owner", owner },
-                    { "metadata.project", project}
+                    { "metadata.project", project }
                 };
 
                 await _fileRepository.UpdateManyAsync(query, updatedMetadata);
@@ -266,14 +330,18 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task UpdateAllFilesInfoAsync(string owner,
-            BsonDocument updatedMetadata)
+        /**
+         * @brief Updates all file information for an owner.
+         * @param owner The owner of the files.
+         * @param updatedMetadata The updated metadata.
+         */
+        public async Task UpdateAllFilesInfoAsync(string owner, BsonDocument updatedMetadata)
         {
             try
             {
                 var query = new BsonDocument
                 {
-                    { "metadata.owner", owner}
+                    { "metadata.owner", owner }
                 };
 
                 await _fileRepository.UpdateManyAsync(query, updatedMetadata);
@@ -284,9 +352,16 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task DeleteFileByVersionAsync(string name,
-            string owner, string type,
-            string project, long version)
+        /**
+         * @brief Deletes a file by version.
+         * @param name The name of the file.
+         * @param owner The owner of the file.
+         * @param type The type of the file.
+         * @param project The project associated with the file.
+         * @param version The version of the file.
+         * @exception ArgumentException Thrown when the version is invalid.
+         */
+        public async Task DeleteFileByVersionAsync(string name, string owner, string type, string project, long version)
         {
             if (version < -1 || version == 0)
             {
@@ -295,9 +370,7 @@ namespace ModelControlApp.Services
 
             try
             {
-                long versionToUse = version != -1
-                                    ? version
-                                    : await GetLastVersionNumberAsync(name, owner, type, project);
+                long versionToUse = version != -1 ? version : await GetLastVersionNumberAsync(name, owner, type, project);
 
                 var query = new BsonDocument
                 {
@@ -316,9 +389,14 @@ namespace ModelControlApp.Services
             }
         }
 
-        public async Task DeleteFileAsync(string name,
-            string owner, string type,
-            string project)
+        /**
+         * @brief Deletes a file.
+         * @param name The name of the file.
+         * @param owner The owner of the file.
+         * @param type The type of the file.
+         * @param project The project associated with the file.
+         */
+        public async Task DeleteFileAsync(string name, string owner, string type, string project)
         {
             try
             {
@@ -338,14 +416,19 @@ namespace ModelControlApp.Services
             }
         }
 
+        /**
+         * @brief Deletes project files.
+         * @param owner The owner of the files.
+         * @param project The project associated with the files.
+         */
         public async Task DeleteProjectFilesAsync(string owner, string project)
         {
             try
             {
                 var query = new BsonDocument
                 {
-                    { "metadata.owner", owner},
-                    { "metadata.project", project}
+                    { "metadata.owner", owner },
+                    { "metadata.project", project }
                 };
                 await _fileRepository.DeleteManyAsync(query);
             }
@@ -355,13 +438,17 @@ namespace ModelControlApp.Services
             }
         }
 
+        /**
+         * @brief Deletes all files for an owner.
+         * @param owner The owner of the files.
+         */
         public async Task DeleteAllFilesAsync(string owner)
         {
             try
             {
                 var query = new BsonDocument
                 {
-                    { "metadata.owner", owner}
+                    { "metadata.owner", owner }
                 };
                 await _fileRepository.DeleteManyAsync(query);
             }
@@ -371,8 +458,15 @@ namespace ModelControlApp.Services
             }
         }
 
-        private async Task<long> GetLastVersionNumberAsync(string fileName,
-            string owner, string type, string project)
+        /**
+         * @brief Gets the last version number of a file.
+         * @param fileName The name of the file.
+         * @param owner The owner of the file.
+         * @param type The type of the file.
+         * @param project The project associated with the file.
+         * @return A task that represents the asynchronous operation. The task result contains the last version number.
+         */
+        private async Task<long> GetLastVersionNumberAsync(string fileName, string owner, string type, string project)
         {
             try
             {

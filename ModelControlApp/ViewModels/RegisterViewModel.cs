@@ -1,4 +1,9 @@
-﻿using ModelControlApp.Services;
+﻿/**
+ * @file RegisterViewModel.cs
+ * @brief ViewModel for user registration.
+ */
+
+using ModelControlApp.Services;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -14,6 +19,10 @@ using ModelControlApp.Infrastructure;
 
 namespace ModelControlApp.ViewModels
 {
+    /**
+     * @class RegisterViewModel
+     * @brief ViewModel for user registration.
+     */
     public class RegisterViewModel : BindableBase
     {
         private readonly AuthApiClient _authApiClient;
@@ -25,6 +34,10 @@ namespace ModelControlApp.ViewModels
 
         public ICommand RegisterCommand { get; }
 
+        /**
+         * @brief Initializes a new instance of the RegisterViewModel class.
+         * @param authApiClient The authentication API client.
+         */
         public RegisterViewModel(AuthApiClient authApiClient)
         {
             _authApiClient = authApiClient;
@@ -49,6 +62,9 @@ namespace ModelControlApp.ViewModels
             set { SetProperty(ref _password, value); }
         }
 
+        /**
+         * @brief Registers the user.
+         */
         private async void RegisterUser()
         {
             try

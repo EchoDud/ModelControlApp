@@ -10,11 +10,19 @@ using System.Threading.Tasks;
 
 namespace ModelControlApp.ApiClients
 {
+    /**
+     * @class AuthApiClient
+     * @brief A client for handling authentication-related API calls.
+     */
     public class AuthApiClient
     {
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl;
 
+        /**
+         * @brief Initializes a new instance of the AuthApiClient class.
+         * @param baseUrl The base URL of the API.
+         */
         public AuthApiClient(string baseUrl)
         {
             var handler = new HttpClientHandler
@@ -26,6 +34,10 @@ namespace ModelControlApp.ApiClients
             _baseUrl = baseUrl.TrimEnd('/');
         }
 
+        /**
+         * @brief Sets the authorization token for the HTTP client.
+         * @param token The authorization token.
+         */
         public void SetToken(string token)
         {
             if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
@@ -40,6 +52,12 @@ namespace ModelControlApp.ApiClients
             Console.WriteLine($"Token set: {token}");
         }
 
+        /**
+         * @brief Registers a new user.
+         * @param registerRequest The registration details.
+         * @return A task that represents the asynchronous operation. The task result contains the response string.
+         * @exception Exception Thrown when the registration fails.
+         */
         public async Task<string> RegisterAsync(RegisterDTO registerRequest)
         {
             var registerContent = new StringContent(JsonSerializer.Serialize(registerRequest), Encoding.UTF8, "application/json");
@@ -57,6 +75,12 @@ namespace ModelControlApp.ApiClients
             }
         }
 
+        /**
+         * @brief Logs in an existing user.
+         * @param loginRequest The login details.
+         * @return A task that represents the asynchronous operation. The task result contains the response string.
+         * @exception Exception Thrown when the login fails.
+         */
         public async Task<string> LoginAsync(LoginDTO loginRequest)
         {
             var loginContent = new StringContent(JsonSerializer.Serialize(loginRequest), Encoding.UTF8, "application/json");
@@ -74,6 +98,11 @@ namespace ModelControlApp.ApiClients
             }
         }
 
+        /**
+         * @brief Retrieves all projects.
+         * @return A task that represents the asynchronous operation. The task result contains a collection of projects.
+         * @exception Exception Thrown when the retrieval of projects fails.
+         */
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         {
             var response = await _httpClient.GetAsync($"{_baseUrl}/api/Projects");
@@ -91,5 +120,4 @@ namespace ModelControlApp.ApiClients
             }
         }
     }
-
 }
