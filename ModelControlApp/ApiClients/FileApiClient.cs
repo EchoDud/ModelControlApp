@@ -26,34 +26,9 @@ namespace ModelControlApp.ApiClients
      * @class FileApiClient
      * @brief A client for handling file-related API calls.
      */
-    public class FileApiClient
+    public class FileApiClient : BaseApiClient
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _baseUrl;
-
-        /**
-         * @brief Initializes a new instance of the FileApiClient class.
-         * @param baseUrl The base URL of the API.
-         */
-        public FileApiClient(string baseUrl)
-        {
-            var handler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-            };
-
-            _httpClient = new HttpClient(handler);
-            _baseUrl = baseUrl.TrimEnd('/');
-        }
-
-        /**
-         * @brief Sets the authorization token for the HTTP client.
-         * @param token The authorization token.
-         */
-        public void SetToken(string token)
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        }
+        public FileApiClient(string baseUrl) : base(baseUrl) { }
 
         /**
          * @brief Deletes a file or a specific version of a file.

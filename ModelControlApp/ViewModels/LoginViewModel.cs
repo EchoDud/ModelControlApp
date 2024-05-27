@@ -1,86 +1,50 @@
-﻿/**
- * @file LoginViewModel.cs
- * @brief ViewModel for user login.
- */
-
-using ModelControlApp.Services;
-using Prism.Commands;
-using Prism.Mvvm;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System.Windows;
-using System.Windows.Controls;
-using ModelControlApp.ApiClients;
+﻿using ModelControlApp.ApiClients;
 using ModelControlApp.DTOs.AuthDTOs;
-using System.Text.Json;
 using ModelControlApp.Infrastructure;
+using ModelControlApp.ViewModels;
+using Prism.Commands;
+using System;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
-namespace ModelControlApp.ViewModels
+public class LoginViewModel : AuthViewModelBase
 {
-    /**
-     * @class LoginViewModel
-     * @brief ViewModel for user login.
-     */
-    public class LoginViewModel : BindableBase
+    private readonly AuthApiClient _authApiClient;
+    public event Action<string> RequestClose;
+    public ICommand LoginCommand { get; }
+
+    public LoginViewModel(AuthApiClient authApiClient)
     {
-        private readonly AuthApiClient _authApiClient;
-        private string _username;
-        private string _password;
+        _authApiClient = authApiClient;
+        LoginCommand = new DelegateCommand(LoginUser);
+    }
 
-        public event Action<string> RequestClose;
-
-        public ICommand LoginCommand { get; }
-
-        /**
-         * @brief Initializes a new instance of the LoginViewModel class.
-         * @param authApiClient The authentication API client.
-         */
-        public LoginViewModel(AuthApiClient authApiClient)
+    private async void LoginUser()
+    {
+        IsBusy = true;
+        try
         {
-            _authApiClient = authApiClient;
-            LoginCommand = new DelegateCommand(LoginUser);
-        }
-
-        public string Username
-        {
-            get { return _username; }
-            set { SetProperty(ref _username, value); }
-        }
-
-        public string Password
-        {
-            get { return _password; }
-            set { SetProperty(ref _password, value); }
-        }
-
-        /**
-         * @brief Logs in the user.
-         */
-        private async void LoginUser()
-        {
-            try
+            var loginDto = new LoginDTO
             {
-                var loginDto = new LoginDTO
-                {
-                    Login = Username,
-                    Password = Password
-                };
+                Login = Username,
+                Password = Password
+            };
 
-                var jsonResponse = await _authApiClient.LoginAsync(loginDto);
-                var token = JsonPreprocessor.ExtractToken(jsonResponse);
+            var jsonResponse = await _authApiClient.LoginAsync(loginDto);
+            var token = JsonPreprocessor.ExtractToken(jsonResponse);
 
-                MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                RequestClose?.Invoke(token);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = JsonPreprocessor.ExtractErrorMessage(ex.Message);
-                MessageBox.Show($"Login failed: {errorMessage}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            RequestClose?.Invoke(token);
+        }
+        catch (Exception ex)
+        {
+            string errorMessage = JsonPreprocessor.ExtractErrorMessage(ex.Message);
+            NotifyError($"Login failed: {errorMessage}");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 }
