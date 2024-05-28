@@ -10,42 +10,42 @@ namespace ModelControlApp.DTOs.FileDTOs
 {
     /**
      * @class FileUploadDTO
-     * @brief Data transfer object for uploading files.
+     * @brief Объект передачи данных для загрузки файлов.
      */
     public class FileUploadDTO
     {
         /**
-         * @brief Gets or sets the name of the file.
+         * @brief Получает или задает имя файла.
          */
         public string Name { get; set; }
 
         /**
-         * @brief Gets or sets the type of the file.
+         * @brief Получает или задает тип файла.
          */
         public string Type { get; set; }
 
         /**
-         * @brief Gets or sets the project name associated with the file.
+         * @brief Получает или задает имя проекта, связанного с файлом.
          */
         public string Project { get; set; }
 
         /**
-         * @brief Gets or sets the file to be uploaded.
+         * @brief Получает или задает файл для загрузки.
          */
         public IFormFile File { get; set; }
 
         /**
-         * @brief Gets or sets the description of the file.
+         * @brief Получает или задает описание файла.
          */
         public string? Description { get; set; }
 
         /**
-         * @brief Gets or sets the owner of the file.
+         * @brief Получает или задает владельца файла.
          */
         public string? Owner { get; set; }
 
         /**
-         * @brief Gets or sets the version of the file.
+         * @brief Получает или задает версию файла.
          */
         public long? Version { get; set; }
     }

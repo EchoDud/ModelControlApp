@@ -8,37 +8,37 @@ namespace ModelControlApp.DTOs.FileDTOs
 {
     /**
      * @class FileInfoDTO
-     * @brief Data transfer object for file information.
+     * @brief Объект передачи данных для информации о файле.
      */
     public class FileInfoDTO
     {
         /**
-         * @brief Gets or sets the project name.
+         * @brief Получает или задает имя проекта.
          */
         public string Project { get; set; }
 
         /**
-         * @brief Gets or sets the filename.
+         * @brief Получает или задает имя файла.
          */
         public string Filename { get; set; }
 
         /**
-         * @brief Gets or sets the file type.
+         * @brief Получает или задает тип файла.
          */
         public string FileType { get; set; }
 
         /**
-         * @brief Gets or sets the owner of the file.
+         * @brief Получает или задает владельца файла.
          */
         public string Owner { get; set; }
 
         /**
-         * @brief Gets or sets the version number of the file.
+         * @brief Получает или задает номер версии файла.
          */
         public int VersionNumber { get; set; }
 
         /**
-         * @brief Gets or sets the version description of the file.
+         * @brief Получает или задает описание версии файла.
          */
         public string VersionDescription { get; set; }
     }

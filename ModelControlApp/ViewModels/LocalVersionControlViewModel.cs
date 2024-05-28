@@ -9,26 +9,23 @@ using ModelControlApp.Services;
 using ModelControlApp.Views;
 using MongoDB.Bson;
 using Prism.Commands;
-using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
-using System.Xml;
 
 namespace ModelControlApp.ViewModels
 {
     /**
      * @class LocalVersionControlViewModel
-     * @brief ViewModel for local version control.
+     * @brief Модель представления для локального управления версиями.
      */
-    public class LocalVersionControlViewModel : BindableBase
+    public class LocalVersionControlViewModel : BaseViewModel
     {
         private readonly IFileService _fileService;
         private readonly FileApiClient _fileApiClient;
@@ -45,9 +42,9 @@ namespace ModelControlApp.ViewModels
         private string _authToken;
 
         /**
-         * @brief Initializes a new instance of the LocalVersionControlViewModel class.
-         * @param fileService The file service.
-         * @param fileApiClient The file API client.
+         * @brief Инициализирует новый экземпляр класса LocalVersionControlViewModel.
+         * @param fileService Сервис файлов.
+         * @param fileApiClient Клиент API для файлов.
          */
         public LocalVersionControlViewModel(IFileService fileService, FileApiClient fileApiClient)
         {
@@ -198,8 +195,8 @@ namespace ModelControlApp.ViewModels
         }
 
         /**
-         * @brief Determines whether a version can be pushed.
-         * @return True if the version can be pushed, otherwise false.
+         * @brief Проверяет, можно ли отправить версию на сервер.
+         * @return true, если версию можно отправить; в противном случае - false.
          */
         private bool CanPushVersion()
         {
@@ -207,8 +204,8 @@ namespace ModelControlApp.ViewModels
         }
 
         /**
-         * @brief Determines whether a model can be pushed.
-         * @return True if the model can be pushed, otherwise false.
+         * @brief Проверяет, можно ли отправить модель на сервер.
+         * @return true, если модель можно отправить; в противном случае - false.
          */
         private bool CanPushModel()
         {
@@ -216,8 +213,8 @@ namespace ModelControlApp.ViewModels
         }
 
         /**
-         * @brief Determines whether a project can be pushed.
-         * @return True if the project can be pushed, otherwise false.
+         * @brief Проверяет, можно ли отправить проект на сервер.
+         * @return true, если проект можно отправить; в противном случае - false.
          */
         private bool CanPushProject()
         {
@@ -225,8 +222,8 @@ namespace ModelControlApp.ViewModels
         }
 
         /**
-         * @brief Determines whether a server model can be deleted.
-         * @return True if the server model can be deleted, otherwise false.
+         * @brief Проверяет, можно ли удалить серверную модель.
+         * @return true, если серверную модель можно удалить; в противном случае - false.
          */
         private bool CanDeleteServerModel()
         {
@@ -234,8 +231,8 @@ namespace ModelControlApp.ViewModels
         }
 
         /**
-         * @brief Determines whether a server version can be deleted.
-         * @return True if the server version can be deleted, otherwise false.
+         * @brief Проверяет, можно ли удалить серверную версию.
+         * @return true, если серверную версию можно удалить; в противном случае - false.
          */
         private bool CanDeleteServerVersion()
         {
@@ -243,8 +240,8 @@ namespace ModelControlApp.ViewModels
         }
 
         /**
-         * @brief Determines whether a server project can be deleted.
-         * @return True if the server project can be deleted, otherwise false.
+         * @brief Проверяет, можно ли удалить серверный проект.
+         * @return true, если серверный проект можно удалить; в противном случае - false.
          */
         private bool CanDeleteServerProject()
         {
@@ -252,10 +249,11 @@ namespace ModelControlApp.ViewModels
         }
 
         /**
-         * @brief Loads server projects.
+         * @brief Загружает проекты с сервера.
          */
         private async void LoadServerProjects()
         {
+            IsBusy = true;
             try
             {
                 var previousSelectedServerProject = SelectedServerProject;
@@ -286,29 +284,42 @@ namespace ModelControlApp.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load server projects: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                NotifyError($"Failed to load server projects: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Logs out the user.
+         * @brief Выполняет выход пользователя из системы.
          */
         private void ExecuteLogout()
         {
-            AuthToken = null;
-            IsLoggedIn = false;
-            ServerProjects.Clear();
-            SelectedServerProject = null;
-            SelectedServerModel = null;
-            SelectedServerVersion = null;
-            MessageBox.Show("Logged out successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            IsBusy = true;
+            try
+            {
+                AuthToken = null;
+                IsLoggedIn = false;
+                ServerProjects.Clear();
+                SelectedServerProject = null;
+                SelectedServerModel = null;
+                SelectedServerVersion = null;
+                NotifyInfo("Logged out successfully.");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         /**
-         * @brief Pushes a version to the server.
+         * @brief Отправляет версию на сервер.
          */
         private async void PushVersionToServer()
         {
+            IsBusy = true;
             try
             {
                 var (modelStream, fileInfo) = await _fileService.DownloadFileWithMetadataAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project, SelectedVersion.Number);
@@ -323,20 +334,25 @@ namespace ModelControlApp.ViewModels
                     Version = SelectedVersion.Number
                 });
 
-                MessageBox.Show("Model version pushed successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                NotifyInfo("Model version pushed successfully.");
                 LoadServerProjects();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to push model version: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                NotifyError($"Failed to push model version: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Pushes a model to the server.
+         * @brief Отправляет модель на сервер.
          */
         private async void PushModelToServer()
         {
+            IsBusy = true;
             try
             {
                 foreach (var version in SelectedModel.VersionNumber)
@@ -354,20 +370,25 @@ namespace ModelControlApp.ViewModels
                     });
                 }
 
-                MessageBox.Show("All model versions pushed successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                NotifyInfo("All model versions pushed successfully.");
                 LoadServerProjects();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to push model versions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                NotifyError($"Failed to push model versions: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Pushes a project to the server.
+         * @brief Отправляет проект на сервер.
          */
         private async void PushProjectToServer()
         {
+            IsBusy = true;
             try
             {
                 foreach (var model in SelectedProject.Models)
@@ -388,110 +409,120 @@ namespace ModelControlApp.ViewModels
                     }
                 }
 
-                MessageBox.Show("All project models and versions pushed successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                NotifyInfo("All project models and versions pushed successfully.");
                 LoadServerProjects();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to push project models and versions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                NotifyError($"Failed to push project models and versions: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Deletes a server model.
+         * @brief Удаляет серверную модель.
          */
         private async void DeleteServerModel()
         {
-            if (SelectedServerModel != null)
+            IsBusy = true;
+            try
             {
-                try
+                await _fileApiClient.DeleteFileOrVersionAsync(new FileQueryDTO
                 {
-                    await _fileApiClient.DeleteFileOrVersionAsync(new FileQueryDTO
-                    {
-                        Name = SelectedServerModel.Name,
-                        Owner = SelectedServerModel.Owner,
-                        Project = SelectedServerModel.Project,
-                        Type = SelectedServerModel.FileType
-                    });
-                    MessageBox.Show("Model deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoadServerProjects();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Failed to delete model: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                    Name = SelectedServerModel.Name,
+                    Owner = SelectedServerModel.Owner,
+                    Project = SelectedServerModel.Project,
+                    Type = SelectedServerModel.FileType
+                });
+                NotifyInfo("Model deleted successfully.");
+                LoadServerProjects();
+            }
+            catch (Exception ex)
+            {
+                NotifyError($"Failed to delete model: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Deletes a server version.
+         * @brief Удаляет серверную версию.
          */
         private async void DeleteServerVersion()
         {
-            if (SelectedServerVersion != null)
+            IsBusy = true;
+            try
             {
-                try
+                await _fileApiClient.DeleteFileOrVersionAsync(new FileQueryDTO
                 {
-                    await _fileApiClient.DeleteFileOrVersionAsync(new FileQueryDTO
-                    {
-                        Name = SelectedServerModel.Name,
-                        Owner = SelectedServerModel.Owner,
-                        Project = SelectedServerModel.Project,
-                        Version = SelectedServerVersion.Number,
-                        Type = SelectedServerModel.FileType
-                    });
-                    MessageBox.Show("Version deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoadServerProjects();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Failed to delete version: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                    Name = SelectedServerModel.Name,
+                    Owner = SelectedServerModel.Owner,
+                    Project = SelectedServerModel.Project,
+                    Version = SelectedServerVersion.Number,
+                    Type = SelectedServerModel.FileType
+                });
+                NotifyInfo("Version deleted successfully.");
+                LoadServerProjects();
+            }
+            catch (Exception ex)
+            {
+                NotifyError($"Failed to delete version: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Deletes a server project.
+         * @brief Удаляет серверный проект.
          */
         private async void DeleteServerProject()
         {
-            if (SelectedServerProject != null)
+            IsBusy = true;
+            try
             {
-                try
+                foreach (var model in SelectedServerProject.Models)
                 {
-                    foreach (var model in SelectedServerProject.Models)
+                    foreach (var version in model.VersionNumber)
                     {
-                        foreach (var version in model.VersionNumber)
-                        {
-                            await _fileApiClient.DeleteFileOrVersionAsync(new FileQueryDTO
-                            {
-                                Name = model.Name,
-                                Owner = model.Owner,
-                                Project = model.Project,
-                                Version = version.Number,
-                                Type = model.FileType
-                            });
-                        }
                         await _fileApiClient.DeleteFileOrVersionAsync(new FileQueryDTO
                         {
                             Name = model.Name,
                             Owner = model.Owner,
                             Project = model.Project,
+                            Version = version.Number,
                             Type = model.FileType
                         });
                     }
-                    MessageBox.Show("Project deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoadServerProjects();
+                    await _fileApiClient.DeleteFileOrVersionAsync(new FileQueryDTO
+                    {
+                        Name = model.Name,
+                        Owner = model.Owner,
+                        Project = model.Project,
+                        Type = model.FileType
+                    });
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Failed to delete project: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                NotifyInfo("Project deleted successfully.");
+                LoadServerProjects();
+            }
+            catch (Exception ex)
+            {
+                NotifyError($"Failed to delete project: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Loads initial data.
+         * @brief Загружает начальные данные.
          */
         private async void LoadInitialData()
         {
@@ -499,7 +530,7 @@ namespace ModelControlApp.ViewModels
         }
 
         /**
-         * @brief Opens the login dialog.
+         * @brief Открывает диалог входа.
          */
         private void ExecuteOpenLoginDialog()
         {
@@ -516,7 +547,7 @@ namespace ModelControlApp.ViewModels
         }
 
         /**
-         * @brief Opens the register dialog.
+         * @brief Открывает диалог регистрации.
          */
         private void ExecuteOpenRegisterDialog()
         {
@@ -533,7 +564,7 @@ namespace ModelControlApp.ViewModels
         }
 
         /**
-         * @brief Loads the selected model version.
+         * @brief Загружает выбранную версию модели.
          */
         private async void LoadSelectedModelVersion()
         {
@@ -547,17 +578,17 @@ namespace ModelControlApp.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error loading 3D model: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    NotifyError($"Error loading 3D model: {ex.Message}");
                 }
             }
         }
 
         /**
-         * @brief Loads a model from a stream.
-         * @param stream The model stream.
-         * @param fileExtension The file extension.
-         * @return The loaded Model3D.
-         * @exception NotSupportedException Thrown when the file format is unsupported.
+         * @brief Загружает модель из потока.
+         * @param stream Поток модели.
+         * @param fileExtension Расширение файла.
+         * @return Загруженная Model3D.
+         * @exception NotSupportedException Вызывается, когда формат файла не поддерживается.
          */
         private Model3D LoadModelFromStream(Stream stream, string fileExtension)
         {
@@ -577,11 +608,12 @@ namespace ModelControlApp.ViewModels
         }
 
         /**
-         * @brief Loads all models by owner.
-         * @param owner The owner of the models.
+         * @brief Загружает все модели по владельцу.
+         * @param owner Владелец моделей.
          */
         public async Task LoadAllModelsByOwner(string owner)
         {
+            IsBusy = true;
             try
             {
                 var previousSelectedProject = SelectedProject;
@@ -643,52 +675,67 @@ namespace ModelControlApp.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load models: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                NotifyError($"Failed to load models: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Creates a new project.
+         * @brief Создает новый проект.
          */
         private void CreateProject()
         {
             var projectName = Microsoft.VisualBasic.Interaction.InputBox("Enter new project name:", "New Project", "Default Project");
             if (string.IsNullOrWhiteSpace(projectName))
             {
-                MessageBox.Show("Project name cannot be empty.", "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Warning);
+                NotifyError("Project name cannot be empty.");
                 return;
             }
 
             if (Projects.Any(p => p.Name.Equals(projectName, StringComparison.OrdinalIgnoreCase)))
             {
-                MessageBox.Show("A project with this name already exists. Please choose a different name.", "Duplicate Project Name", MessageBoxButton.OK, MessageBoxImage.Error);
+                NotifyError("A project with this name already exists. Please choose a different name.");
                 return;
             }
 
             Projects.Add(new Project { Name = projectName });
-            LoadServerProjects();
         }
 
         /**
-         * @brief Deletes the selected project.
+         * @brief Удаляет выбранный проект.
          */
         private async void DeleteProject()
         {
-            if (SelectedProject != null)
+            IsBusy = true;
+            try
             {
-                foreach (var model in SelectedProject.Models.ToList())
+                if (SelectedProject != null)
                 {
-                    await _fileService.DeleteFileAsync(model.Name, model.Owner, model.FileType, model.Project);
-                }
+                    foreach (var model in SelectedProject.Models.ToList())
+                    {
+                        await _fileService.DeleteFileAsync(model.Name, model.Owner, model.FileType, model.Project);
+                    }
 
-                Projects.Remove(SelectedProject);
-                CurrentModel3D = null;
-                LoadAllModelsByOwner("User");
+                    Projects.Remove(SelectedProject);
+                    CurrentModel3D = null;
+                    await LoadAllModelsByOwner("User");
+                }
+            }
+            catch (Exception ex)
+            {
+                NotifyError($"Failed to delete project: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Adds a new model.
+         * @brief Добавляет новую модель.
          */
         private async void AddModel()
         {
@@ -702,13 +749,13 @@ namespace ModelControlApp.ViewModels
 
                     if (string.IsNullOrWhiteSpace(modelName))
                     {
-                        MessageBox.Show("Model name cannot be empty.", "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        NotifyError("Model name cannot be empty.");
                         return;
                     }
 
                     if (SelectedProject != null && SelectedProject.Models.Any(m => m.Name.Equals(modelName, StringComparison.OrdinalIgnoreCase)))
                     {
-                        MessageBox.Show("A model with this name already exists in the current project. Please choose a different name.", "Duplicate Model Name", MessageBoxButton.OK, MessageBoxImage.Error);
+                        NotifyError("A model with this name already exists in the current project. Please choose a different name.");
                         return;
                     }
 
@@ -731,46 +778,70 @@ namespace ModelControlApp.ViewModels
                         Project = SelectedProject.Name,
                         VersionNumber = new ObservableCollection<ModelVersion> { new ModelVersion { Number = 1, Description = "Initial version" } }
                     });
-                    LoadAllModelsByOwner("User");
+                    await LoadAllModelsByOwner("User");
                 }
             }
         }
 
         /**
-         * @brief Removes the selected model.
+         * @brief Удаляет выбранную модель.
          */
         private async void RemoveModel()
         {
-            if (SelectedModel != null)
+            IsBusy = true;
+            try
             {
-                await _fileService.DeleteFileAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project);
-                SelectedProject.Models.Remove(SelectedModel);
-                CurrentModel3D = null;
-                LoadAllModelsByOwner("User");
+                if (SelectedModel != null)
+                {
+                    await _fileService.DeleteFileAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project);
+                    SelectedProject.Models.Remove(SelectedModel);
+                    CurrentModel3D = null;
+                    await LoadAllModelsByOwner("User");
+                }
+            }
+            catch (Exception ex)
+            {
+                NotifyError($"Failed to remove model: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Removes the selected version.
+         * @brief Удаляет выбранную версию.
          */
         private async void RemoveVersion()
         {
-            if (SelectedModel != null && SelectedVersion != null)
+            IsBusy = true;
+            try
             {
-                await _fileService.DeleteFileByVersionAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project, SelectedVersion.Number);
-                SelectedModel.VersionNumber.Remove(SelectedVersion);
-
-                if (!SelectedModel.VersionNumber.Any())
+                if (SelectedModel != null && SelectedVersion != null)
                 {
-                    SelectedProject.Models.Remove(SelectedModel);
+                    await _fileService.DeleteFileByVersionAsync(SelectedModel.Name, SelectedModel.Owner, SelectedModel.FileType, SelectedModel.Project, SelectedVersion.Number);
+                    SelectedModel.VersionNumber.Remove(SelectedVersion);
+
+                    if (!SelectedModel.VersionNumber.Any())
+                    {
+                        SelectedProject.Models.Remove(SelectedModel);
+                    }
+                    SelectedVersion = null;
+                    await LoadAllModelsByOwner("User");
                 }
-                SelectedVersion = null;
-                LoadAllModelsByOwner("User");
+            }
+            catch (Exception ex)
+            {
+                NotifyError($"Failed to remove version: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Updates the selected model.
+         * @brief Обновляет выбранную модель.
          */
         private async void UpdateModel()
         {
@@ -787,13 +858,13 @@ namespace ModelControlApp.ViewModels
                         Number = SelectedModel.VersionNumber.Max(v => v.Number) + 1,
                         Description = userDescription
                     });
-                    LoadAllModelsByOwner("User");
+                    await LoadAllModelsByOwner("User");
                 }
             }
         }
 
         /**
-         * @brief Extracts the selected model.
+         * @brief Извлекает выбранную модель.
          */
         private async void ExtractModel()
         {
@@ -820,19 +891,20 @@ namespace ModelControlApp.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error extracting model: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    NotifyError($"Error extracting model: {ex.Message}");
                 }
             }
         }
 
         /**
-         * @brief Clones the selected server version.
+         * @brief Клонирует выбранную серверную версию.
          */
         private async void CloneVersion()
         {
-            if (SelectedServerModel != null && SelectedServerVersion != null)
+            IsBusy = true;
+            try
             {
-                try
+                if (SelectedServerModel != null && SelectedServerVersion != null)
                 {
                     var fileQueryDto = new FileQueryDTO
                     {
@@ -859,23 +931,28 @@ namespace ModelControlApp.ViewModels
 
                     await LoadAllModelsByOwner("User");
 
-                    MessageBox.Show("Version cloned successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    NotifyInfo("Version cloned successfully.");
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error cloning version: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+            }
+            catch (Exception ex)
+            {
+                NotifyError($"Error cloning version: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Clones the selected server model.
+         * @brief Клонирует выбранную серверную модель.
          */
         private async void CloneModel()
         {
-            if (SelectedServerModel != null)
+            IsBusy = true;
+            try
             {
-                try
+                if (SelectedServerModel != null)
                 {
                     foreach (var version in SelectedServerModel.VersionNumber)
                     {
@@ -905,23 +982,28 @@ namespace ModelControlApp.ViewModels
 
                     await LoadAllModelsByOwner("User");
 
-                    MessageBox.Show("Model cloned successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    NotifyInfo("Model cloned successfully.");
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error cloning model: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+            }
+            catch (Exception ex)
+            {
+                NotifyError($"Error cloning model: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         /**
-         * @brief Clones the selected server project.
+         * @brief Клонирует выбранный серверный проект.
          */
         private async void CloneProject()
         {
-            if (SelectedServerProject != null)
+            IsBusy = true;
+            try
             {
-                try
+                if (SelectedServerProject != null)
                 {
                     foreach (var model in SelectedServerProject.Models)
                     {
@@ -954,12 +1036,16 @@ namespace ModelControlApp.ViewModels
 
                     await LoadAllModelsByOwner("User");
 
-                    MessageBox.Show("Project cloned successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    NotifyInfo("Project cloned successfully.");
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error cloning project: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+            }
+            catch (Exception ex)
+            {
+                NotifyError($"Error cloning project: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
     }

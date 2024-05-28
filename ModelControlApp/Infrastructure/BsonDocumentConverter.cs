@@ -11,16 +11,16 @@ namespace ModelControlApp.Infrastructure
 {
     /**
      * @class BsonDocumentConverter
-     * @brief JSON converter for BsonDocument.
+     * @brief JSON-конвертер для BsonDocument.
      */
     public class BsonDocumentConverter : JsonConverter<BsonDocument>
     {
         /**
-         * @brief Reads a BsonDocument from JSON.
-         * @param reader The JSON reader.
-         * @param typeToConvert The type to convert.
-         * @param options The serializer options.
-         * @return The BsonDocument.
+         * @brief Читает BsonDocument из JSON.
+         * @param reader JSON-ридер.
+         * @param typeToConvert Тип для конвертации.
+         * @param options Опции сериализации.
+         * @return BsonDocument.
          */
         public override BsonDocument Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -29,10 +29,10 @@ namespace ModelControlApp.Infrastructure
         }
 
         /**
-         * @brief Writes a BsonDocument to JSON.
-         * @param writer The JSON writer.
-         * @param value The BsonDocument value.
-         * @param options The serializer options.
+         * @brief Записывает BsonDocument в JSON.
+         * @param writer JSON-райтер.
+         * @param value Значение BsonDocument.
+         * @param options Опции сериализации.
          */
         public override void Write(Utf8JsonWriter writer, BsonDocument value, JsonSerializerOptions options)
         {

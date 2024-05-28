@@ -7,11 +7,19 @@ using System.Threading.Tasks;
 
 namespace ModelControlApp.ApiClients
 {
+    /**
+     * @class BaseApiClient
+     * @brief Базовый клиент для выполнения API-запросов.
+     */
     public abstract class BaseApiClient : IBaseApiClient
     {
         protected readonly HttpClient _httpClient;
         protected readonly string _baseUrl;
 
+        /**
+         * @brief Конструктор с базовым URL.
+         * @param baseUrl Базовый URL.
+         */
         protected BaseApiClient(string baseUrl)
         {
             var handler = new HttpClientHandler
@@ -23,6 +31,10 @@ namespace ModelControlApp.ApiClients
             _baseUrl = baseUrl.TrimEnd('/');
         }
 
+        /**
+         * @brief Устанавливает токен аутентификации.
+         * @param token Токен.
+         */
         public void SetToken(string token)
         {
             if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
@@ -35,7 +47,5 @@ namespace ModelControlApp.ApiClients
                 _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             }
         }
-
-        // Add other common methods if necessary
     }
 }

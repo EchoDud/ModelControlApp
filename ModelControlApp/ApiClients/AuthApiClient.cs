@@ -10,10 +10,24 @@ using System.Threading.Tasks;
 
 namespace ModelControlApp.ApiClients
 {
+    /**
+     * @class AuthApiClient
+     * @brief Клиент для выполнения операций аутентификации.
+     */
     public class AuthApiClient : BaseApiClient
     {
+        /**
+         * @brief Конструктор с базовым URL.
+         * @param baseUrl Базовый URL.
+         */
         public AuthApiClient(string baseUrl) : base(baseUrl) { }
 
+        /**
+         * @brief Выполняет регистрацию пользователя.
+         * @param registerRequest Данные для регистрации.
+         * @return Результат регистрации.
+         * @exception Exception Вызывается в случае ошибки.
+         */
         public async Task<string> RegisterAsync(RegisterDTO registerRequest)
         {
             var registerContent = new StringContent(JsonSerializer.Serialize(registerRequest), Encoding.UTF8, "application/json");
@@ -31,6 +45,12 @@ namespace ModelControlApp.ApiClients
             }
         }
 
+        /**
+         * @brief Выполняет вход пользователя.
+         * @param loginRequest Данные для входа.
+         * @return Результат входа.
+         * @exception Exception Вызывается в случае ошибки.
+         */
         public async Task<string> LoginAsync(LoginDTO loginRequest)
         {
             var loginContent = new StringContent(JsonSerializer.Serialize(loginRequest), Encoding.UTF8, "application/json");
@@ -47,7 +67,5 @@ namespace ModelControlApp.ApiClients
                 throw new Exception(error);
             }
         }
-
-        // Add other methods specific to AuthApiClient
     }
 }

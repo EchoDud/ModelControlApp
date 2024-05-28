@@ -9,17 +9,17 @@ namespace ModelControlApp.Models
 {
     /**
      * @class Project
-     * @brief Represents a project.
+     * @brief Представляет проект.
      */
     public class Project
     {
         /**
-         * @brief Gets or sets the name of the project.
+         * @brief Получает или задает имя проекта.
          */
         public string Name { get; set; }
 
         /**
-         * @brief Gets or sets the models associated with the project.
+         * @brief Получает или задает модели, связанные с проектом.
          */
         public ObservableCollection<Model> Models { get; set; } = new ObservableCollection<Model>();
     }

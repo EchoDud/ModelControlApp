@@ -10,14 +10,14 @@ namespace ModelControlApp.Infrastructure
 {
     /**
      * @class JsonPreprocessor
-     * @brief Static class for preprocessing JSON strings.
+     * @brief Статический класс для предобработки JSON-строк.
      */
     public static class JsonPreprocessor
     {
         /**
-         * @brief Preprocesses a JSON string.
-         * @param json The JSON string.
-         * @return The preprocessed JSON string.
+         * @brief Предобрабатывает JSON-строку.
+         * @param json JSON-строка.
+         * @return Предобработанная JSON-строка.
          */
         public static string PreprocessJson(string json)
         {
@@ -28,9 +28,9 @@ namespace ModelControlApp.Infrastructure
         }
 
         /**
-         * @brief Extracts a token from a JSON response.
-         * @param jsonResponse The JSON response.
-         * @return The extracted token.
+         * @brief Извлекает токен из JSON-ответа.
+         * @param jsonResponse JSON-ответ.
+         * @return Извлеченный токен.
          */
         public static string ExtractToken(string jsonResponse)
         {
@@ -39,9 +39,9 @@ namespace ModelControlApp.Infrastructure
         }
 
         /**
-         * @brief Extracts an error message from a JSON response.
-         * @param jsonResponse The JSON response.
-         * @return The extracted error message.
+         * @brief Извлекает сообщение об ошибке из JSON-ответа.
+         * @param jsonResponse JSON-ответ.
+         * @return Извлеченное сообщение об ошибке.
          */
         public static string ExtractErrorMessage(string jsonResponse)
         {
@@ -52,7 +52,7 @@ namespace ModelControlApp.Infrastructure
             }
             catch
             {
-                return "An unknown error occurred.";
+                return "Произошла неизвестная ошибка.";
             }
         }
     }

@@ -8,17 +8,17 @@ namespace ModelControlApp.Models
 {
     /**
      * @class ModelVersion
-     * @brief Represents a version of a model.
+     * @brief Представляет версию модели.
      */
     public class ModelVersion
     {
         /**
-         * @brief Gets or sets the version number.
+         * @brief Получает или задает номер версии.
          */
         public int Number { get; set; }
 
         /**
-         * @brief Gets or sets the description of the version.
+         * @brief Получает или задает описание версии.
          */
         public string Description { get; set; }
     }

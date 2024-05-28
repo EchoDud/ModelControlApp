@@ -12,7 +12,7 @@ namespace ModelControlApp.Repositories
 {
     /**
      * @class FileRepository
-     * @brief Repository for handling file operations with MongoDB GridFS.
+     * @brief Репозиторий для операций с файлами в MongoDB GridFS.
      */
     public class FileRepository : IFileRepository
     {
@@ -21,9 +21,9 @@ namespace ModelControlApp.Repositories
         private readonly IMongoClient _client;
 
         /**
-         * @brief Initializes a new instance of the FileRepository class.
-         * @param client The MongoDB client.
-         * @param databaseName The name of the database.
+         * @brief Инициализирует новый экземпляр класса FileRepository.
+         * @param client Клиент MongoDB.
+         * @param databaseName Имя базы данных.
          */
         public FileRepository(IMongoClient client, string databaseName)
         {
@@ -33,12 +33,12 @@ namespace ModelControlApp.Repositories
         }
 
         /**
-         * @brief Uploads a file to GridFS.
-         * @param fileName The name of the file.
-         * @param stream The file stream.
-         * @param metadata The file metadata.
-         * @return A task that represents the asynchronous operation. The task result contains the ObjectId of the uploaded file.
-         * @exception ArgumentException Thrown when the stream is null or empty.
+         * @brief Загружает файл в GridFS.
+         * @param fileName Имя файла.
+         * @param stream Поток файла.
+         * @param metadata Метаданные файла.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является ObjectId загруженного файла.
+         * @exception ArgumentException Вызывается, когда поток пуст или null.
          */
         public async Task<ObjectId> UploadAsync(string fileName, Stream stream, BsonDocument metadata)
         {
@@ -62,10 +62,10 @@ namespace ModelControlApp.Repositories
         }
 
         /**
-         * @brief Downloads a file from GridFS based on the given query.
-         * @param query The query to match the file to be downloaded.
-         * @return A task that represents the asynchronous operation. The task result contains the file stream.
-         * @exception FileNotFoundException Thrown when the file is not found.
+         * @brief Загружает файл из GridFS по заданному запросу.
+         * @param query Запрос для поиска файла для загрузки.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является поток файла.
+         * @exception FileNotFoundException Вызывается, когда файл не найден.
          */
         public async Task<Stream> DownloadAsync(BsonDocument query)
         {
@@ -94,9 +94,9 @@ namespace ModelControlApp.Repositories
         }
 
         /**
-         * @brief Gets information for a single file from GridFS based on the given query.
-         * @param query The query to match the file.
-         * @return A task that represents the asynchronous operation. The task result contains the file information.
+         * @brief Получает информацию об одном файле из GridFS по заданному запросу.
+         * @param query Запрос для поиска файла.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является информация о файле.
          */
         public async Task<GridFSFileInfo> GetOneAsync(BsonDocument query)
         {
@@ -113,9 +113,9 @@ namespace ModelControlApp.Repositories
         }
 
         /**
-         * @brief Gets information for multiple files from GridFS based on the given query.
-         * @param query The query to match the files.
-         * @return A task that represents the asynchronous operation. The task result contains a list of file information.
+         * @brief Получает информацию о нескольких файлах из GridFS по заданному запросу.
+         * @param query Запрос для поиска файлов.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является список информации о файлах.
          */
         public async Task<List<GridFSFileInfo>> GetManyAsync(BsonDocument query)
         {
@@ -132,10 +132,10 @@ namespace ModelControlApp.Repositories
         }
 
         /**
-         * @brief Updates metadata for a single file in GridFS based on the given query.
-         * @param query The query to match the file to be updated.
-         * @param updatedMetadata The updated metadata.
-         * @exception Exception Thrown when the update operation fails.
+         * @brief Обновляет метаданные одного файла в GridFS по заданному запросу.
+         * @param query Запрос для поиска файла для обновления.
+         * @param updatedMetadata Обновленные метаданные.
+         * @exception Exception Вызывается, когда операция обновления завершается неудачно.
          */
         public async Task UpdateOneAsync(BsonDocument query, BsonDocument updatedMetadata)
         {
@@ -181,10 +181,10 @@ namespace ModelControlApp.Repositories
         }
 
         /**
-         * @brief Updates metadata for multiple files in GridFS based on the given query.
-         * @param query The query to match the files to be updated.
-         * @param updatedMetadata The updated metadata.
-         * @exception Exception Thrown when the update operation fails.
+         * @brief Обновляет метаданные нескольких файлов в GridFS по заданному запросу.
+         * @param query Запрос для поиска файлов для обновления.
+         * @param updatedMetadata Обновленные метаданные.
+         * @exception Exception Вызывается, когда операция обновления завершается неудачно.
          */
         public async Task UpdateManyAsync(BsonDocument query, BsonDocument updatedMetadata)
         {
@@ -230,9 +230,9 @@ namespace ModelControlApp.Repositories
         }
 
         /**
-         * @brief Deletes a single file from GridFS based on the given query.
-         * @param query The query to match the file to be deleted.
-         * @exception Exception Thrown when the delete operation fails.
+         * @brief Удаляет один файл из GridFS по заданному запросу.
+         * @param query Запрос для поиска файла для удаления.
+         * @exception Exception Вызывается, когда операция удаления завершается неудачно.
          */
         public async Task DeleteOneAsync(BsonDocument query)
         {
@@ -253,9 +253,9 @@ namespace ModelControlApp.Repositories
         }
 
         /**
-         * @brief Deletes multiple files from GridFS based on the given query.
-         * @param query The query to match the files to be deleted.
-         * @exception Exception Thrown when the delete operation fails.
+         * @brief Удаляет несколько файлов из GridFS по заданному запросу.
+         * @param query Запрос для поиска файлов для удаления.
+         * @exception Exception Вызывается, когда операция удаления завершается неудачно.
          */
         public async Task DeleteManyAsync(BsonDocument query)
         {

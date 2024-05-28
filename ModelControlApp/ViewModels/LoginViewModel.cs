@@ -8,18 +8,29 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+/**
+ * @class LoginViewModel
+ * @brief Модель представления для входа в систему.
+ */
 public class LoginViewModel : AuthViewModelBase
 {
     private readonly AuthApiClient _authApiClient;
     public event Action<string> RequestClose;
     public ICommand LoginCommand { get; }
 
+    /**
+     * @brief Конструктор с параметрами для инициализации.
+     * @param authApiClient Клиент для аутентификации.
+     */
     public LoginViewModel(AuthApiClient authApiClient)
     {
         _authApiClient = authApiClient;
         LoginCommand = new DelegateCommand(LoginUser);
     }
 
+    /**
+     * @brief Метод для выполнения входа пользователя.
+     */
     private async void LoginUser()
     {
         IsBusy = true;
@@ -34,7 +45,7 @@ public class LoginViewModel : AuthViewModelBase
             var jsonResponse = await _authApiClient.LoginAsync(loginDto);
             var token = JsonPreprocessor.ExtractToken(jsonResponse);
 
-            MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            NotifyInfo("Login successful!");
             RequestClose?.Invoke(token);
         }
         catch (Exception ex)

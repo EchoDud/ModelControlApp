@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,32 +9,32 @@ namespace ModelControlApp.Models
 {
     /**
      * @class Model
-     * @brief Represents a model in a project.
+     * @brief Представляет модель в проекте.
      */
     public class Model
     {
         /**
-         * @brief Gets or sets the name of the model.
+         * @brief Получает или задает имя модели.
          */
         public string Name { get; set; }
 
         /**
-         * @brief Gets or sets the type of the file associated with the model.
+         * @brief Получает или задает тип файла, связанного с моделью.
          */
         public string FileType { get; set; }
 
         /**
-         * @brief Gets or sets the owner of the model.
+         * @brief Получает или задает владельца модели.
          */
         public string Owner { get; set; }
 
         /**
-         * @brief Gets or sets the project associated with the model.
+         * @brief Получает или задает проект, связанный с моделью.
          */
         public string Project { get; set; }
 
         /**
-         * @brief Gets or sets the version numbers of the model.
+         * @brief Получает или задает номера версий модели.
          */
         public ObservableCollection<ModelVersion> VersionNumber { get; set; } = new ObservableCollection<ModelVersion>();
     }

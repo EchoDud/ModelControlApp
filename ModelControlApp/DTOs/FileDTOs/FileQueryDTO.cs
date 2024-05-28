@@ -9,32 +9,32 @@ namespace ModelControlApp.DTOs.FileDTOs
 {
     /**
      * @class FileQueryDTO
-     * @brief Data transfer object for querying file information.
+     * @brief Объект передачи данных для запроса информации о файле.
      */
     public class FileQueryDTO
     {
         /**
-         * @brief Gets or sets the name of the file.
+         * @brief Получает или задает имя файла.
          */
         public string Name { get; set; }
 
         /**
-         * @brief Gets or sets the type of the file.
+         * @brief Получает или задает тип файла.
          */
         public string Type { get; set; }
 
         /**
-         * @brief Gets or sets the project name associated with the file.
+         * @brief Получает или задает имя проекта, связанного с файлом.
          */
         public string Project { get; set; }
 
         /**
-         * @brief Gets or sets the version of the file.
+         * @brief Получает или задает версию файла.
          */
         public long? Version { get; set; }
 
         /**
-         * @brief Gets or sets the owner of the file.
+         * @brief Получает или задает владельца файла.
          */
         public string? Owner { get; set; }
     }

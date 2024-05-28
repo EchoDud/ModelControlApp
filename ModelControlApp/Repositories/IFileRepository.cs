@@ -11,63 +11,63 @@ namespace ModelControlApp.Repositories
 {
     /**
      * @interface IFileRepository
-     * @brief Interface for file repository operations.
+     * @brief Интерфейс для операций с хранилищем файлов.
      */
     public interface IFileRepository
     {
         /**
-         * @brief Deletes multiple files based on the given query.
-         * @param query The query to match files to be deleted.
+         * @brief Удаляет несколько файлов по заданному запросу.
+         * @param query Запрос для поиска файлов для удаления.
          */
         Task DeleteManyAsync(BsonDocument query);
 
         /**
-         * @brief Deletes a single file based on the given query.
-         * @param query The query to match the file to be deleted.
+         * @brief Удаляет один файл по заданному запросу.
+         * @param query Запрос для поиска файла для удаления.
          */
         Task DeleteOneAsync(BsonDocument query);
 
         /**
-         * @brief Downloads a file based on the given query.
-         * @param query The query to match the file to be downloaded.
-         * @return A task that represents the asynchronous operation. The task result contains the file stream.
+         * @brief Загружает файл по заданному запросу.
+         * @param query Запрос для поиска файла для загрузки.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является поток файла.
          */
         Task<Stream> DownloadAsync(BsonDocument query);
 
         /**
-         * @brief Gets information for multiple files based on the given query.
-         * @param query The query to match the files.
-         * @return A task that represents the asynchronous operation. The task result contains a list of file information.
+         * @brief Получает информацию о нескольких файлах по заданному запросу.
+         * @param query Запрос для поиска файлов.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является список информации о файлах.
          */
         Task<List<GridFSFileInfo>> GetManyAsync(BsonDocument query);
 
         /**
-         * @brief Gets information for a single file based on the given query.
-         * @param query The query to match the file.
-         * @return A task that represents the asynchronous operation. The task result contains the file information.
+         * @brief Получает информацию об одном файле по заданному запросу.
+         * @param query Запрос для поиска файла.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является информация о файле.
          */
         Task<GridFSFileInfo> GetOneAsync(BsonDocument query);
 
         /**
-         * @brief Updates metadata for multiple files based on the given query.
-         * @param query The query to match the files to be updated.
-         * @param updatedMetadata The updated metadata.
+         * @brief Обновляет метаданные нескольких файлов по заданному запросу.
+         * @param query Запрос для поиска файлов для обновления.
+         * @param updatedMetadata Обновленные метаданные.
          */
         Task UpdateManyAsync(BsonDocument query, BsonDocument updatedMetadata);
 
         /**
-         * @brief Updates metadata for a single file based on the given query.
-         * @param query The query to match the file to be updated.
-         * @param updatedMetadata The updated metadata.
+         * @brief Обновляет метаданные одного файла по заданному запросу.
+         * @param query Запрос для поиска файла для обновления.
+         * @param updatedMetadata Обновленные метаданные.
          */
         Task UpdateOneAsync(BsonDocument query, BsonDocument updatedMetadata);
 
         /**
-         * @brief Uploads a file.
-         * @param fileName The name of the file.
-         * @param stream The file stream.
-         * @param metadata The file metadata.
-         * @return A task that represents the asynchronous operation. The task result contains the ObjectId of the uploaded file.
+         * @brief Загружает файл.
+         * @param fileName Имя файла.
+         * @param stream Поток файла.
+         * @param metadata Метаданные файла.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является ObjectId загруженного файла.
          */
         Task<ObjectId> UploadAsync(string fileName, Stream stream, BsonDocument metadata);
     }

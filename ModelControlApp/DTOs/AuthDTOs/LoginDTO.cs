@@ -9,25 +9,25 @@ namespace ModelControlApp.DTOs.AuthDTOs
 {
     /**
      * @class LoginDTO
-     * @brief Data transfer object for user login.
+     * @brief Объект передачи данных для входа пользователя.
      */
     public class LoginDTO
     {
         /**
-         * @brief Gets or sets the login name.
-         * @details The login name must be between 3 and 30 characters long and cannot consist only of whitespace characters.
+         * @brief Получает или задает логин.
+         * @details Логин должен содержать от 3 до 30 символов и не может состоять только из пробелов.
          */
-        [Required(ErrorMessage = "Login is required")]
-        [StringLength(30, MinimumLength = 3, ErrorMessage = "Login length must be between 3 and 30 characters")]
-        [RegularExpression(@"\S+", ErrorMessage = "Login cannot consist only of whitespace characters")]
+        [Required(ErrorMessage = "Требуется логин")]
+        [StringLength(30, MinimumLength = 3, ErrorMessage = "Длина логина должна быть от 3 до 30 символов")]
+        [RegularExpression(@"\S+", ErrorMessage = "Логин не может состоять только из пробелов")]
         public string Login { get; set; } = null!;
 
         /**
-         * @brief Gets or sets the password.
-         * @details The password must be between 8 and 256 characters long.
+         * @brief Получает или задает пароль.
+         * @details Пароль должен содержать от 8 до 256 символов.
          */
-        [Required(ErrorMessage = "Password is required")]
-        [StringLength(256, MinimumLength = 8, ErrorMessage = "Password length must be between 8 and 256 characters")]
+        [Required(ErrorMessage = "Требуется пароль")]
+        [StringLength(256, MinimumLength = 8, ErrorMessage = "Длина пароля должна быть от 8 до 256 символов")]
         public string Password { get; set; } = null!;
     }
 }

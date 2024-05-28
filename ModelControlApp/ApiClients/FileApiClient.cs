@@ -24,16 +24,20 @@ namespace ModelControlApp.ApiClients
 {
     /**
      * @class FileApiClient
-     * @brief A client for handling file-related API calls.
+     * @brief Клиент для выполнения операций с файлами через API.
      */
     public class FileApiClient : BaseApiClient
     {
+        /**
+         * @brief Конструктор с базовым URL.
+         * @param baseUrl Базовый URL.
+         */
         public FileApiClient(string baseUrl) : base(baseUrl) { }
 
         /**
-         * @brief Deletes a file or a specific version of a file.
-         * @param queryRequest The file query details.
-         * @exception HttpRequestException Thrown when the deletion request fails.
+         * @brief Удаляет файл или определенную версию файла.
+         * @param queryRequest Детали запроса файла.
+         * @exception HttpRequestException Вызывается в случае ошибки запроса.
          */
         public async Task DeleteFileOrVersionAsync(FileQueryDTO queryRequest)
         {
@@ -52,10 +56,10 @@ namespace ModelControlApp.ApiClients
         }
 
         /**
-         * @brief Uploads a new file version or a new file with owner information.
-         * @param uploadRequest The file upload details.
-         * @return A task that represents the asynchronous operation. The task result contains the response string.
-         * @exception HttpRequestException Thrown when the upload request fails.
+         * @brief Загружает новую версию файла или новый файл с информацией о владельце.
+         * @param uploadRequest Детали загрузки файла.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является строка ответа.
+         * @exception HttpRequestException Вызывается в случае ошибки запроса.
          */
         public async Task<string> UploadOwnerVersionAsync(FileUploadDTO uploadRequest)
         {
@@ -86,9 +90,9 @@ namespace ModelControlApp.ApiClients
         }
 
         /**
-         * @brief Retrieves all projects with their details.
-         * @return A task that represents the asynchronous operation. The task result contains a collection of projects.
-         * @exception Exception Thrown when the retrieval of projects fails.
+         * @brief Получает все проекты с их деталями.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является коллекция проектов.
+         * @exception Exception Вызывается в случае ошибки получения проектов.
          */
         public async Task<IEnumerable<Project>> GetAllProjectsAsync()
         {
@@ -100,12 +104,10 @@ namespace ModelControlApp.ApiClients
 
             if (string.IsNullOrWhiteSpace(jsonResponse))
             {
-                throw new Exception("The JSON response from the server is empty.");
+                throw new Exception("JSON-ответ от сервера пуст.");
             }
 
             jsonResponse = JsonPreprocessor.PreprocessJson(jsonResponse);
-
-            Console.WriteLine("Preprocessed JSON Response: " + jsonResponse);
 
             ApiResponseDTO apiResponse;
             try
@@ -117,12 +119,12 @@ namespace ModelControlApp.ApiClients
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error deserializing JSON response: {ex.Message}");
+                throw new Exception($"Ошибка десериализации JSON-ответа: {ex.Message}");
             }
 
             if (apiResponse.Values == null)
             {
-                throw new Exception("The 'Values' property in the API response is null.");
+                throw new Exception("Свойство 'Values' в ответе API равно null.");
             }
 
             var fileInfos = new List<DTOs.JsonDTOs.FileInfoDTO>();
@@ -137,8 +139,6 @@ namespace ModelControlApp.ApiClients
                 {
                     var preprocessedValue = JsonPreprocessor.PreprocessJson(value);
 
-                    Console.WriteLine("Preprocessed Individual Value: " + preprocessedValue);
-
                     var fileInfo = JsonSerializer.Deserialize<DTOs.JsonDTOs.FileInfoDTO>(preprocessedValue, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
@@ -151,7 +151,7 @@ namespace ModelControlApp.ApiClients
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Error deserializing individual file info: {ex.Message}. Value: {value}");
+                    throw new Exception($"Ошибка десериализации информации о файле: {ex.Message}. Значение: {value}");
                 }
             }
 
@@ -195,11 +195,11 @@ namespace ModelControlApp.ApiClients
         }
 
         /**
-         * @brief Downloads a file along with its metadata.
-         * @param fileQueryDto The file query details.
-         * @return A task that represents the asynchronous operation. The task result contains a tuple of the file stream and the file metadata.
-         * @exception HttpRequestException Thrown when the download request fails.
-         * @exception InvalidOperationException Thrown when the response does not contain metadata.
+         * @brief Загружает файл вместе с его метаданными.
+         * @param fileQueryDto Детали запроса файла.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является кортеж из потока файла и метаданных файла.
+         * @exception HttpRequestException Вызывается в случае ошибки запроса.
+         * @exception InvalidOperationException Вызывается, если ответ не содержит метаданных.
          */
         public async Task<(Stream, GridFSFileInfo)> DownloadFileWithMetadataAsync(FileQueryDTO fileQueryDto)
         {
@@ -213,7 +213,7 @@ namespace ModelControlApp.ApiClients
 
             if (string.IsNullOrEmpty(metadataJson))
             {
-                throw new InvalidOperationException("Response does not contain metadata.");
+                throw new InvalidOperationException("Ответ не содержит метаданных.");
             }
 
             var fileInfo = BsonSerializer.Deserialize<GridFSFileInfo>(metadataJson);

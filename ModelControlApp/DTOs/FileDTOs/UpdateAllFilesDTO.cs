@@ -9,22 +9,22 @@ namespace ModelControlApp.DTOs.FileDTOs
 {
     /**
      * @class UpdateAllFilesDTO
-     * @brief Data transfer object for updating all files with new metadata.
+     * @brief Объект передачи данных для обновления всех файлов новыми метаданными.
      */
     public class UpdateAllFilesDTO
     {
         /**
-         * @brief Gets or sets the updated metadata.
+         * @brief Получает или задает обновленные метаданные.
          */
         public string UpdatedMetadata { get; set; }
 
         /**
-         * @brief Gets or sets the project name associated with the files.
+         * @brief Получает или задает имя проекта, связанного с файлами.
          */
         public string Project { get; set; }
 
         /**
-         * @brief Gets or sets the owner of the files.
+         * @brief Получает или задает владельца файлов.
          */
         public string? Owner { get; set; }
     }

@@ -13,15 +13,15 @@ namespace ModelControlApp.Services
 {
     /**
      * @class FileService
-     * @brief Service for handling file operations.
+     * @brief Сервис для операций с файлами.
      */
     public class FileService : IFileService
     {
         private readonly IFileRepository _fileRepository;
 
         /**
-         * @brief Initializes a new instance of the FileService class.
-         * @param fileRepository The file repository.
+         * @brief Инициализирует новый экземпляр класса FileService.
+         * @param fileRepository Репозиторий файлов.
          */
         public FileService(IFileRepository fileRepository)
         {
@@ -29,16 +29,16 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Uploads a file.
-         * @param name The name of the file.
-         * @param owner The owner of the file.
-         * @param type The type of the file.
-         * @param project The project associated with the file.
-         * @param stream The file stream.
-         * @param description The description of the file.
-         * @param version The version of the file.
-         * @return A task that represents the asynchronous operation. The task result contains the ObjectId of the uploaded file.
-         * @exception ArgumentException Thrown when the version is invalid.
+         * @brief Загружает файл.
+         * @param name Имя файла.
+         * @param owner Владелец файла.
+         * @param type Тип файла.
+         * @param project Проект, связанный с файлом.
+         * @param stream Поток файла.
+         * @param description Описание файла.
+         * @param version Версия файла.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является ObjectId загруженного файла.
+         * @exception ArgumentException Вызывается, когда версия недействительна.
          */
         public async Task<ObjectId> UploadFileAsync(string name, string owner, string type, string project, Stream stream, string? description = null, long? version = null)
         {
@@ -83,14 +83,14 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Downloads a file with metadata.
-         * @param name The name of the file.
-         * @param owner The owner of the file.
-         * @param type The type of the file.
-         * @param project The project associated with the file.
-         * @param version The version of the file.
-         * @return A task that represents the asynchronous operation. The task result contains the file stream and metadata.
-         * @exception ArgumentException Thrown when the version is invalid.
+         * @brief Загружает файл с метаданными.
+         * @param name Имя файла.
+         * @param owner Владелец файла.
+         * @param type Тип файла.
+         * @param project Проект, связанный с файлом.
+         * @param version Версия файла.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является поток файла и метаданные.
+         * @exception ArgumentException Вызывается, когда версия недействительна.
          */
         public async Task<(Stream, GridFSFileInfo)> DownloadFileWithMetadataAsync(string name, string owner, string type, string project, long? version = null)
         {
@@ -129,14 +129,14 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Gets file information by version.
-         * @param name The name of the file.
-         * @param owner The owner of the file.
-         * @param type The type of the file.
-         * @param project The project associated with the file.
-         * @param version The version of the file.
-         * @return A task that represents the asynchronous operation. The task result contains the file information.
-         * @exception ArgumentException Thrown when the version is invalid.
+         * @brief Получает информацию о версии файла.
+         * @param name Имя файла.
+         * @param owner Владелец файла.
+         * @param type Тип файла.
+         * @param project Проект, связанный с файлом.
+         * @param version Версия файла.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является информация о файле.
+         * @exception ArgumentException Вызывается, когда версия недействительна.
          */
         public async Task<GridFSFileInfo> GetFileInfoByVersionAsync(string name, string owner, string type, string project, long version)
         {
@@ -167,12 +167,12 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Gets file information.
-         * @param name The name of the file.
-         * @param owner The owner of the file.
-         * @param type The type of the file.
-         * @param project The project associated with the file.
-         * @return A task that represents the asynchronous operation. The task result contains a list of file information.
+         * @brief Получает информацию о файле.
+         * @param name Имя файла.
+         * @param owner Владелец файла.
+         * @param type Тип файла.
+         * @param project Проект, связанный с файлом.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является список информации о файле.
          */
         public async Task<List<GridFSFileInfo>> GetFileInfoAsync(string name, string owner, string type, string project)
         {
@@ -195,10 +195,10 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Gets project files information.
-         * @param owner The owner of the files.
-         * @param project The project associated with the files.
-         * @return A task that represents the asynchronous operation. The task result contains a list of file information.
+         * @brief Получает информацию о файлах проекта.
+         * @param owner Владелец файлов.
+         * @param project Проект, связанный с файлами.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является список информации о файлах.
          */
         public async Task<List<GridFSFileInfo>> GetProjectFilesInfoAsync(string owner, string project)
         {
@@ -219,9 +219,9 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Gets all files information for an owner.
-         * @param owner The owner of the files.
-         * @return A task that represents the asynchronous operation. The task result contains a list of file information.
+         * @brief Получает информацию обо всех файлах для владельца.
+         * @param owner Владелец файлов.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является список информации о файлах.
          */
         public async Task<List<GridFSFileInfo>> GetAllFilesInfoAsync(string owner)
         {
@@ -241,14 +241,14 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Updates file information by version.
-         * @param name The name of the file.
-         * @param owner The owner of the file.
-         * @param type The type of the file.
-         * @param project The project associated with the file.
-         * @param version The version of the file.
-         * @param updatedMetadata The updated metadata.
-         * @exception ArgumentException Thrown when the version is invalid.
+         * @brief Обновляет информацию о версии файла.
+         * @param name Имя файла.
+         * @param owner Владелец файла.
+         * @param type Тип файла.
+         * @param project Проект, связанный с файлом.
+         * @param version Версия файла.
+         * @param updatedMetadata Обновленные метаданные.
+         * @exception ArgumentException Вызывается, когда версия недействительна.
          */
         public async Task UpdateFileInfoByVersionAsync(string name, string owner, string type, string project, long version, BsonDocument updatedMetadata)
         {
@@ -279,12 +279,12 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Updates file information.
-         * @param name The name of the file.
-         * @param owner The owner of the file.
-         * @param type The type of the file.
-         * @param project The project associated with the file.
-         * @param updatedMetadata The updated metadata.
+         * @brief Обновляет информацию о файле.
+         * @param name Имя файла.
+         * @param owner Владелец файла.
+         * @param type Тип файла.
+         * @param project Проект, связанный с файлом.
+         * @param updatedMetadata Обновленные метаданные.
          */
         public async Task UpdateFileInfoAsync(string name, string owner, string type, string project, BsonDocument updatedMetadata)
         {
@@ -307,10 +307,10 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Updates file information by project.
-         * @param owner The owner of the files.
-         * @param project The project associated with the files.
-         * @param updatedMetadata The updated metadata.
+         * @brief Обновляет информацию о файлах по проекту.
+         * @param owner Владелец файлов.
+         * @param project Проект, связанный с файлами.
+         * @param updatedMetadata Обновленные метаданные.
          */
         public async Task UpdateFileInfoByProjectAsync(string owner, string project, BsonDocument updatedMetadata)
         {
@@ -331,9 +331,9 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Updates all file information for an owner.
-         * @param owner The owner of the files.
-         * @param updatedMetadata The updated metadata.
+         * @brief Обновляет всю информацию о файлах для владельца.
+         * @param owner Владелец файлов.
+         * @param updatedMetadata Обновленные метаданные.
          */
         public async Task UpdateAllFilesInfoAsync(string owner, BsonDocument updatedMetadata)
         {
@@ -353,13 +353,13 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Deletes a file by version.
-         * @param name The name of the file.
-         * @param owner The owner of the file.
-         * @param type The type of the file.
-         * @param project The project associated with the file.
-         * @param version The version of the file.
-         * @exception ArgumentException Thrown when the version is invalid.
+         * @brief Удаляет файл по версии.
+         * @param name Имя файла.
+         * @param owner Владелец файла.
+         * @param type Тип файла.
+         * @param project Проект, связанный с файлом.
+         * @param version Версия файла.
+         * @exception ArgumentException Вызывается, когда версия недействительна.
          */
         public async Task DeleteFileByVersionAsync(string name, string owner, string type, string project, long version)
         {
@@ -390,11 +390,11 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Deletes a file.
-         * @param name The name of the file.
-         * @param owner The owner of the file.
-         * @param type The type of the file.
-         * @param project The project associated with the file.
+         * @brief Удаляет файл.
+         * @param name Имя файла.
+         * @param owner Владелец файла.
+         * @param type Тип файла.
+         * @param project Проект, связанный с файлом.
          */
         public async Task DeleteFileAsync(string name, string owner, string type, string project)
         {
@@ -417,9 +417,9 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Deletes project files.
-         * @param owner The owner of the files.
-         * @param project The project associated with the files.
+         * @brief Удаляет файлы проекта.
+         * @param owner Владелец файлов.
+         * @param project Проект, связанный с файлами.
          */
         public async Task DeleteProjectFilesAsync(string owner, string project)
         {
@@ -439,8 +439,8 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Deletes all files for an owner.
-         * @param owner The owner of the files.
+         * @brief Удаляет все файлы для владельца.
+         * @param owner Владелец файлов.
          */
         public async Task DeleteAllFilesAsync(string owner)
         {
@@ -459,12 +459,12 @@ namespace ModelControlApp.Services
         }
 
         /**
-         * @brief Gets the last version number of a file.
-         * @param fileName The name of the file.
-         * @param owner The owner of the file.
-         * @param type The type of the file.
-         * @param project The project associated with the file.
-         * @return A task that represents the asynchronous operation. The task result contains the last version number.
+         * @brief Получает последний номер версии файла.
+         * @param fileName Имя файла.
+         * @param owner Владелец файла.
+         * @param type Тип файла.
+         * @param project Проект, связанный с файлом.
+         * @return Задача, представляющая асинхронную операцию. Результатом задачи является последний номер версии.
          */
         private async Task<long> GetLastVersionNumberAsync(string fileName, string owner, string type, string project)
         {
